@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FitlY - Stay Fit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <style>
+        body {
+            background: linear-gradient(121.28deg, #03002C 0%, #00FF94 100%), linear-gradient(180deg, #00647A 0%, #FFFFFF 100%), linear-gradient(244.35deg, #FF8282 0%, #E86B6B 50.58%, #001B29 100%), linear-gradient(244.35deg, #E03F3F 0%, #00114B 49.48%, #FF0000 100%), radial-gradient(100% 216.55% at 0% 0%, #2400FF 0%, #FF0000 44.27%, #610051 100%), linear-gradient(307.27deg, #096F5C 0.37%, #687EB5 50.19%, #8877CE 100%), radial-gradient(56.34% 100% at 36.02% 0%, #FF00C7 0%, #006C7A 38.54%, #FF9900 100%);
+            background-blend-mode: overlay, difference, overlay, overlay, difference, color-dodge, normal;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="text-center fw-bolder display-1 mt-5 pt-5">FiTly</h1>
+                    <p class="text-center lead mb-5 pb-5">Stay Fit</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-12"></div>
+                <div class="col-md-3 col-12">
+                    <div class="card border-0 my-2">
+                        <div class="card-body px-5 py-5">
+                            <form>
+                                <div class="mb-5">
+                                    <label class="form-label d-block lead mb-5">Select Gender</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input my-2" type="radio" id="male" value="male"
+                                            name="gender">
+                                        <label class="form-check-label lead">Man</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input my-2" type="radio" id="female" value="female"
+                                            name="gender" checked>
+                                        <label class="form-check-label lead">Woman</label>
+                                    </div>
+                                </div>
+                                <div class="d-grid mt-5">
+                                    <button type="button" class="btn btn-outline-primary shadow-none"
+                                        onclick="getGender();">Next</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12">
+                    <div class="card border-0 my-2">
+                        <div class="card-body">
+                            <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12"></div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-12"></div>
+                <div class="col-md-3 col-12">
+                    <div class="card border-0 my-2">
+                        <div class="card-body">
+                            <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12">
+                    <div class="card border-0 my-2">
+                        <div class="card-body px-5 py-5">
+                            <form>
+                                <div class="mb-5">
+                                    <label class="form-label d-block lead mb-5">Select Gender</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input my-2" type="radio" id="male" value="male"
+                                            name="gender">
+                                        <label class="form-check-label lead">Man</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input my-2" type="radio" id="female" value="female"
+                                            name="gender" checked>
+                                        <label class="form-check-label lead">Woman</label>
+                                    </div>
+                                </div>
+                                <!-- <div class="mb-3">
+                                    <label class="form-label d-block">Date of Birth</label>
+                                    <input type="date" class="form-control shadow-none border-0" id="dob">
+                                </div> -->
+                                <div class="d-grid mt-5">
+                                    <button type="button" class="btn btn-outline-primary shadow-none"
+                                        onclick="weightCalculate();">Next</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12"></div>
+            </div>
+        </div>
+    </section>
+    <!-- <footer class="bg-dark text-white mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p class="text-center pt-3">Footer Section</p>
+                </div>
+            </div>
+        </div>
+    </footer> -->
+</body>
+<script>
+    const getGender = () => {
+        let sex;
+        let gender = document.getElementsByName('gender');
+        for (let radio of gender) {
+            if (radio.checked) {
+                sex = (radio.value);
+                if (sex === "male") {
+                    document.getElementById("img-sex").src = './res/img/man_simple.webp';
+                } else {
+                    document.getElementById("img-sex").src = './res/img/woman.webp';
+                }
+            }
+        }
+    }
+    const getDob = () => {
+        let sex;
+        let gender = document.getElementsByName('gender');
+        for (let radio of gender) {
+            if (radio.checked) {
+                sex = (radio.value);
+                if (sex === "male") {
+                    document.getElementById("img-sex").src = './res/img/man_simple.webp';
+                } else {
+                    document.getElementById("img-sex").src = './res/img/woman.webp';
+                }
+            }
+        }
+        // let dob = document.getElementById('dob').value;
+        // console.log(sex);
+    }
+</script>
+
+</html>
