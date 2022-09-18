@@ -8,9 +8,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <style>
-        body {
+        header {
             background: linear-gradient(121.28deg, #03002C 0%, #00FF94 100%), linear-gradient(180deg, #00647A 0%, #FFFFFF 100%), linear-gradient(244.35deg, #FF8282 0%, #E86B6B 50.58%, #001B29 100%), linear-gradient(244.35deg, #E03F3F 0%, #00114B 49.48%, #FF0000 100%), radial-gradient(100% 216.55% at 0% 0%, #2400FF 0%, #FF0000 44.27%, #610051 100%), linear-gradient(307.27deg, #096F5C 0.37%, #687EB5 50.19%, #8877CE 100%), radial-gradient(56.34% 100% at 36.02% 0%, #FF00C7 0%, #006C7A 38.54%, #FF9900 100%);
             background-blend-mode: overlay, difference, overlay, overlay, difference, color-dodge, normal;
+        }
+
+        #show-age,
+        #show-sex {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            top: 0;
+            right: 0;
         }
     </style>
 </head>
@@ -32,10 +41,10 @@
                 <div class="col-md-3 col-12"></div>
                 <div class="col-md-3 col-12">
                     <div class="card border-0 my-2">
-                        <div class="card-body px-5 py-5">
+                        <div class="card-body px-5 py-4">
                             <form>
                                 <div class="mb-5">
-                                    <label class="form-label d-block lead mb-5">Select Gender</label>
+                                    <label class="form-label d-block lead mb-4">Select Your Gender</label>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input my-2" type="radio" id="male" value="male"
                                             name="gender">
@@ -49,7 +58,7 @@
                                 </div>
                                 <div class="d-grid mt-5">
                                     <button type="button" class="btn btn-outline-primary shadow-none"
-                                        onclick="getGender();">Next</button>
+                                        onclick="getGender();">Confirm</button>
                                 </div>
                             </form>
                         </div>
@@ -59,6 +68,8 @@
                     <div class="card border-0 my-2">
                         <div class="card-body">
                             <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                            <div id="show-sex" class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">
+                                ?</div>
                         </div>
                     </div>
                 </div>
@@ -72,33 +83,53 @@
                     <div class="card border-0 my-2">
                         <div class="card-body">
                             <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                            <div id="show-age"
+                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">?</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-12">
                     <div class="card border-0 my-2">
-                        <div class="card-body px-5 py-5">
+                        <div class="card-body px-5 py-4">
                             <form>
-                                <div class="mb-5">
-                                    <label class="form-label d-block lead mb-5">Select Gender</label>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input my-2" type="radio" id="male" value="male"
-                                            name="gender">
-                                        <label class="form-check-label lead">Man</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input my-2" type="radio" id="female" value="female"
-                                            name="gender" checked>
-                                        <label class="form-check-label lead">Woman</label>
-                                    </div>
+                                <div class="mb-3">
+                                    <label class="form-label d-block lead">Please insert your Date of Birth</label>
+                                    <input type="date" class="form-control shadow-none border-0 my-5" id="bdate"
+                                        onchange="getDob();">
                                 </div>
-                                <!-- <div class="mb-3">
-                                    <label class="form-label d-block">Date of Birth</label>
-                                    <input type="date" class="form-control shadow-none border-0" id="dob">
-                                </div> -->
                                 <div class="d-grid mt-5">
-                                    <button type="button" class="btn btn-outline-primary shadow-none"
-                                        onclick="weightCalculate();">Next</button>
+                                    <button type="button" class="btn btn-outline-primary shadow-none">Confirm</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12"></div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-12"></div>
+                <div class="col-md-3 col-12">
+                    <div class="card border-0 my-2">
+                        <div class="card-body">
+                            <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                            <div id="show-age"
+                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">?</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12">
+                    <div class="card border-0 my-2">
+                        <div class="card-body px-5 py-4">
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label d-block lead">Please insert your Date of Birth</label>
+                                    <input type="date" class="form-control shadow-none border-0 my-5" id="bdate"
+                                        onchange="getDob();">
+                                </div>
+                                <div class="d-grid mt-5">
+                                    <button type="button" class="btn btn-outline-primary shadow-none">Confirm</button>
                                 </div>
                             </form>
                         </div>
@@ -120,34 +151,49 @@
 </body>
 <script>
     const getGender = () => {
-        let sex;
         let gender = document.getElementsByName('gender');
         for (let radio of gender) {
             if (radio.checked) {
-                sex = (radio.value);
+                let sex = (radio.value);
                 if (sex === "male") {
                     document.getElementById("img-sex").src = './res/img/man_simple.webp';
+                    document.getElementById("show-sex").innerHTML = "👨";
                 } else {
                     document.getElementById("img-sex").src = './res/img/woman.webp';
+                    document.getElementById("show-sex").innerHTML = "👩";
                 }
             }
         }
     }
     const getDob = () => {
-        let sex;
-        let gender = document.getElementsByName('gender');
-        for (let radio of gender) {
-            if (radio.checked) {
-                sex = (radio.value);
-                if (sex === "male") {
-                    document.getElementById("img-sex").src = './res/img/man_simple.webp';
-                } else {
-                    document.getElementById("img-sex").src = './res/img/woman.webp';
-                }
-            }
+        let dob = document.getElementById('bdate').value;
+
+        const bDate = new Date(dob);
+        let bYear = bDate.getFullYear();
+        let bMonth = bDate.getMonth() + 1;
+        let bDay = bDate.getDate();
+
+        const cDate = new Date();
+        let cYear = cDate.getFullYear();
+        let cMonth = cDate.getMonth() + 1;
+        let cDay = cDate.getDate();
+
+        if (bDay > cDay) {
+            cDay = cDay + month[cMonth - 1];
+            cMonth = cMonth - 1;
         }
-        // let dob = document.getElementById('dob').value;
-        // console.log(sex);
+        if (bMonth > cMonth) {
+            cMonth = cMonth + 12;
+            cYear = cYear - 1;
+        }
+
+        let ageD = cDay - bDay;
+        let ageM = cMonth - bMonth;
+        let ageY = cYear - bYear;
+
+        document.getElementById("show-age").innerHTML = ageY;
+
+        // console.log(d, m, y,);
     }
 </script>
 
