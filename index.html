@@ -14,7 +14,8 @@
         }
 
         #show-age,
-        #show-sex {
+        #show-sex, 
+        #show-weight {
             width: 60px;
             height: 60px;
             position: absolute;
@@ -68,7 +69,8 @@
                     <div class="card border-0 my-2">
                         <div class="card-body">
                             <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
-                            <div id="show-sex" class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">
+                            <div id="show-sex"
+                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">
                                 ?</div>
                         </div>
                     </div>
@@ -82,9 +84,10 @@
                 <div class="col-md-3 col-12">
                     <div class="card border-0 my-2">
                         <div class="card-body">
-                            <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                            <img id="img-dob" class="img-fluid px-1" src="res/img/woman.webp" alt="">
                             <div id="show-age"
-                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">?</div>
+                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">?
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -112,26 +115,41 @@
                 <div class="col-md-3 col-12"></div>
                 <div class="col-md-3 col-12">
                     <div class="card border-0 my-2">
-                        <div class="card-body">
-                            <img id="img-sex" class="img-fluid px-1" src="res/img/woman.webp" alt="">
-                            <div id="show-age"
-                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">?</div>
+                        <div class="card-body px-5 py-4">
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label d-block lead">What is you body Height?</label>
+                                    <input type="range" class="form-range" id="body-height" value="40" min="21" max="100"
+                                        onchange="getHeight();">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label d-block lead">Weight?</label>
+                                    <input type="range" class="form-range" id="body-weight" value="45" min="1"
+                                        max="160" onchange="getWeight();">
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="lead text-start" id="show-height">3'4"</p>
+                                    </div>
+                                    <div class="col">
+                                        <p class="lead text-end" id="show-weight">45Kg</p>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="button" min="0" max="100"
+                                        class="btn btn-outline-primary shadow-none">Confirm</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-12">
                     <div class="card border-0 my-2">
-                        <div class="card-body px-5 py-4">
-                            <form>
-                                <div class="mb-3">
-                                    <label class="form-label d-block lead">Please insert your Date of Birth</label>
-                                    <input type="date" class="form-control shadow-none border-0 my-5" id="bdate"
-                                        onchange="getDob();">
-                                </div>
-                                <div class="d-grid mt-5">
-                                    <button type="button" class="btn btn-outline-primary shadow-none">Confirm</button>
-                                </div>
-                            </form>
+                        <div class="card-body">
+                            <img id="img-weight" class="img-fluid px-1" src="res/img/woman.webp" alt="">
+                            <div id="show-weight"
+                                class="text-center text-danger lead fw-bolder bg-white rounded-circle shadow py-3">?
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,11 +174,15 @@
             if (radio.checked) {
                 let sex = (radio.value);
                 if (sex === "male") {
-                    document.getElementById("img-sex").src = './res/img/man_simple.webp';
                     document.getElementById("show-sex").innerHTML = "👨";
+                    document.getElementById("img-sex").src = './res/img/man_simple.webp';
+                    document.getElementById("img-dob").src = './res/img/man_simple.webp';
+                    document.getElementById("img-weight").src = './res/img/man_simple.webp';
                 } else {
-                    document.getElementById("img-sex").src = './res/img/woman.webp';
                     document.getElementById("show-sex").innerHTML = "👩";
+                    document.getElementById("img-sex").src = './res/img/woman.webp';
+                    document.getElementById("img-dob").src = './res/img/woman.webp';
+                    document.getElementById("img-weight").src = './res/img/woman.webp';
                 }
             }
         }
@@ -194,6 +216,16 @@
         document.getElementById("show-age").innerHTML = ageY;
 
         // console.log(d, m, y,);
+    }
+    const getWeight = () => {
+        let bWeight = document.getElementById("body-weight").value;
+        document.getElementById("show-weight").innerHTML = bWeight + " Kg";
+    }
+    const getHeight = () => {
+        let bHeight = document.getElementById("body-height").value;
+        let hFeet = parseInt(bHeight / 12); 
+        let hInch = parseInt(bHeight % 12);
+        document.getElementById("show-height").innerHTML = hFeet + "&apos; " + hInch + "&quot;";
     }
 </script>
 
