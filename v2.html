@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitly 2025 | Modern Fitness Assessment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff94;
+            --secondary: #03002c;
+            --accent: #9d4edd;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #03002c, #00114b);
+            color: var(--light);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .space-grotesk {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .container {
+            max-width: 900px;
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), #00e6c3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        
+        .tagline {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            height: 100%;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .form-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .gender-selector {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .gender-option {
+            flex: 1;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .gender-option:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .gender-option.active {
+            border-color: var(--primary);
+            background: rgba(0, 255, 148, 0.1);
+        }
+        
+        .gender-option i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .value-display {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border: 3px solid var(--primary);
+            margin: 0 auto;
+            color: var(--primary);
+        }
+        
+        .form-range {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .form-range::-webkit-slider-thumb {
+            width: 25px;
+            height: 25px;
+            background: var(--primary);
+            border: none;
+        }
+        
+        .action-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        
+        .action-btn:hover {
+            background: rgba(0, 255, 148, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .action-btn.secondary {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            gap: 1.5rem;
+        }
+        
+        .progress-step {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            position: relative;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active {
+            background: rgba(0, 255, 148, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .progress-step.completed {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .step-container {
+            position: relative;
+            min-height: 450px;
+        }
+        
+        .step-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(30px);
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .step-card.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+        
+        .visualization {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .human-silhouette {
+            width: 150px;
+            height: 250px;
+            position: relative;
+            margin: 1rem 0;
+        }
+        
+        .body-part {
+            position: absolute;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .head {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            top: 0;
+            left: 45px;
+        }
+        
+        .torso {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            top: 60px;
+            left: 35px;
+        }
+        
+        .legs {
+            width: 20px;
+            height: 100px;
+            top: 140px;
+            left: 60px;
+        }
+        
+        .leg-left {
+            transform: rotate(10deg);
+            left: 45px;
+        }
+        
+        .leg-right {
+            transform: rotate(-10deg);
+            left: 75px;
+        }
+        
+        .arms {
+            width: 100px;
+            height: 20px;
+            top: 80px;
+        }
+        
+        .arm-left {
+            transform: rotate(45deg);
+            left: -10px;
+        }
+        
+        .arm-right {
+            transform: rotate(-45deg);
+            right: -10px;
+        }
+        
+        .result-badge {
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            color: var(--accent);
+        }
+        
+        .summary-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .summary-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 255, 148, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .bmi-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+        
+        .bmi-scale {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            position: relative;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .bmi-indicator {
+            position: absolute;
+            height: 30px;
+            width: 4px;
+            background: var(--primary);
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        .bmi-category {
+            flex: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            padding-top: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .gender-option {
+                padding: 1rem 0.5rem;
+            }
+            
+            .gender-option i {
+                font-size: 2rem;
+            }
+            
+            .value-display {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+            
+            .progress-step {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .progress-step:not(:last-child)::after {
+                width: 30px;
+            }
+            
+            .step-container {
+                min-height: 550px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center mb-5">
+                <h1 class="logo space-grotesk">FiTly</h1>
+                <p class="tagline">Personalized Fitness Assessment for 2025</p>
+            </div>
+            
+            <div class="col-md-10">
+                <div class="progress-container">
+                    <div class="progress-step completed">1</div>
+                    <div class="progress-step active">2</div>
+                    <div class="progress-step">3</div>
+                    <div class="progress-step">4</div>
+                </div>
+                
+                <div class="step-container">
+                    <!-- Step 1: Gender -->
+                    <div class="step-card active" id="step-1">
+                        <div class="glass-card">
+                            <h3 class="section-title"><i class="fas fa-venus-mars me-2"></i>Select Your Gender</h3>
+                            <p class="text-muted mb-4">Choose your gender for personalized fitness recommendations</p>
+                            
+                            <div class="gender-selector">
+                                <div class="gender-option" onclick="selectGender('male')">
+                                    <i class="fas fa-mars"></i>
+                                    <div class="mt-2">Man</div>
+                                </div>
+                                <div class="gender-option active" onclick="selectGender('female')">
+                                    <i class="fas fa-venus"></i>
+                                    <div class="mt-2">Woman</div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-5">
+                                <button class="action-btn disabled" disabled>
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button class="action-btn" onclick="nextStep(2)">
+                                    Next <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Date of Birth -->
+                    <div class="step-card" id="step-2">
+                        <div class="glass-card">
+                            <h3 class="section-title"><i class="fas fa-birthday-cake me-2"></i>Enter Your Date of Birth</h3>
+                            <p class="text-muted mb-4">Your age helps us provide age-appropriate fitness guidance</p>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Select your birth date</label>
+                                <input type="date" class="form-control bg-transparent text-white border-secondary" id="bdate" onchange="getDob()">
+                            </div>
+                            
+                            <div class="value-display" id="show-age">?</div>
+                            
+                            <div class="d-flex justify-content-between mt-5">
+                                <button class="action-btn secondary" onclick="prevStep(1)">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button class="action-btn" onclick="nextStep(3)">
+                                    Next <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Measurements -->
+                    <div class="step-card" id="step-3">
+                        <div class="glass-card">
+                            <h3 class="section-title"><i class="fas fa-weight-scale me-2"></i>Body Measurements</h3>
+                            <p class="text-muted mb-4">Accurate measurements help calculate your fitness metrics</p>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Height: <span id="show-height">5'7"</span></label>
+                                <input type="range" class="form-range" id="body-height" value="67" min="21" max="100" onchange="getHeight()">
+                                <div class="d-flex justify-content-between text-muted mt-1">
+                                    <small>4'</small>
+                                    <small>6'</small>
+                                    <small>8'</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Weight: <span id="show-weight">68 Kg</span></label>
+                                <input type="range" class="form-range" id="body-weight" value="68" min="1" max="160" onchange="getWeight()">
+                                <div class="d-flex justify-content-between text-muted mt-1">
+                                    <small>40 Kg</small>
+                                    <small>100 Kg</small>
+                                    <small>160 Kg</small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-5">
+                                <button class="action-btn secondary" onclick="prevStep(2)">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button class="action-btn" onclick="nextStep(4)">
+                                    Analyze <i class="fas fa-chart-simple ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Results -->
+                    <div class="step-card" id="step-4">
+                        <div class="glass-card">
+                            <h3 class="section-title"><i class="fas fa-chart-line me-2"></i>Your Fitness Summary</h3>
+                            <p class="text-muted mb-4">Based on your inputs, here's your personalized fitness assessment</p>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <div class="summary-item">
+                                        <div class="summary-icon">
+                                            <i class="fas fa-venus"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-muted">Gender</div>
+                                            <div class="fw-bold" id="summary-gender">Woman</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="summary-item">
+                                        <div class="summary-icon">
+                                            <i class="fas fa-cake-candles"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-muted">Age</div>
+                                            <div class="fw-bold" id="summary-age">28 years</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="summary-item">
+                                        <div class="summary-icon">
+                                            <i class="fas fa-ruler-vertical"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-muted">Height</div>
+                                            <div class="fw-bold" id="summary-height">5'7"</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="summary-item">
+                                        <div class="summary-icon">
+                                            <i class="fas fa-weight-hanging"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-muted">Weight</div>
+                                            <div class="fw-bold" id="summary-weight">68 Kg</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center my-4">
+                                <div class="bmi-value" id="summary-bmi">23.5</div>
+                                <div class="text-muted">Body Mass Index (BMI)</div>
+                                
+                                <div class="bmi-scale mt-4">
+                                    <div class="bmi-indicator"></div>
+                                    <div style="background: #00c853; width: 25%;"></div>
+                                    <div style="background: #aeea00; width: 25%;"></div>
+                                    <div style="background: #ffab00; width: 25%;"></div>
+                                    <div style="background: #ff5252; width: 25%;"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <div class="bmi-category">Underweight</div>
+                                    <div class="bmi-category">Healthy</div>
+                                    <div class="bmi-category">Overweight</div>
+                                    <div class="bmi-category">Obese</div>
+                                </div>
+                                
+                                <div class="result-badge mt-4">
+                                    <i class="fas fa-check-circle me-2"></i>Healthy Weight Range
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <button class="action-btn secondary" onclick="prevStep(3)">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button class="action-btn" onclick="restartAssessment()">
+                                    Restart <i class="fas fa-sync-alt ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Current step tracking
+        let currentStep = 1;
+        let selectedGender = 'female';
+        
+        // Initialize with default values
+        document.addEventListener('DOMContentLoaded', function() {
+            getHeight();
+            getWeight();
+        });
+        
+        // Step navigation functions
+        function nextStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.querySelector(`.progress-step:nth-child(${currentStep})`).classList.remove('active');
+            
+            currentStep = step;
+            
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            document.querySelector(`.progress-step:nth-child(${currentStep})`).classList.add('active');
+            document.querySelector(`.progress-step:nth-child(${currentStep-1})`).classList.add('completed');
+            
+            // Update summary on results page
+            if(currentStep === 4) {
+                document.getElementById('summary-gender').innerText = 
+                    selectedGender === 'male' ? 'Man' : 'Woman';
+                document.getElementById('summary-age').innerText = 
+                    document.getElementById('show-age').innerText + ' years';
+                document.getElementById('summary-height').innerText = 
+                    document.getElementById('show-height').innerText;
+                document.getElementById('summary-weight').innerText = 
+                    document.getElementById('show-weight').innerText;
+                document.getElementById('summary-bmi').innerText = 
+                    document.getElementById('show-bmi').innerText;
+            }
+        }
+        
+        function prevStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.querySelector(`.progress-step:nth-child(${currentStep})`).classList.remove('active');
+            
+            currentStep = step;
+            
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            document.querySelector(`.progress-step:nth-child(${currentStep})`).classList.add('active');
+        }
+        
+        function restartAssessment() {
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            currentStep = 1;
+            
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            document.querySelector('.progress-step:nth-child(1)').classList.add('active');
+        }
+        
+        // Form functions
+        function selectGender(gender) {
+            selectedGender = gender;
+            document.querySelectorAll('.gender-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            if(gender === 'male') {
+                document.querySelector('.gender-option:nth-child(1)').classList.add('active');
+            } else {
+                document.querySelector('.gender-option:nth-child(2)').classList.add('active');
+            }
+        }
+        
+        function getDob() {
+            let dob = document.getElementById('bdate').value;
+            
+            if(!dob) return;
+            
+            const bDate = new Date(dob);
+            const cDate = new Date();
+            let ageY = cDate.getFullYear() - bDate.getFullYear();
+            
+            // Adjust if birthday hasn't occurred yet this year
+            if (cDate.getMonth() < bDate.getMonth() || 
+                (cDate.getMonth() === bDate.getMonth() && cDate.getDate() < bDate.getDate())) {
+                ageY--;
+            }
+            
+            document.getElementById("show-age").innerHTML = ageY;
+        }
+        
+        function getWeight() {
+            let bWeight = document.getElementById("body-weight").value;
+            document.getElementById("show-weight").innerHTML = bWeight + " Kg";
+            updateBMI();
+        }
+        
+        function getHeight() {
+            let bHeight = document.getElementById("body-height").value;
+            let hFeet = parseInt(bHeight / 12); 
+            let hInch = parseInt(bHeight % 12);
+            document.getElementById("show-height").innerHTML = hFeet + "'" + hInch + '"';
+            updateBMI();
+        }
+        
+        function updateBMI() {
+            let height = document.getElementById("body-height").value; // in inches
+            let weight = document.getElementById("body-weight").value; // in kg
+            
+            if(height > 0 && weight > 0) {
+                // Convert height to meters: inches * 0.0254
+                let heightM = height * 0.0254;
+                let bmi = (weight / (heightM * heightM)).toFixed(1);
+                
+                // Create BMI element if it doesn't exist
+                if(!document.getElementById('show-bmi')) {
+                    let bmiDisplay = document.createElement('div');
+                    bmiDisplay.id = 'show-bmi';
+                    bmiDisplay.className = 'value-display';
+                    document.querySelector('.glass-card:nth-child(3)').appendChild(bmiDisplay);
+                }
+                
+                document.getElementById("show-bmi").innerHTML = bmi;
+            }
+        }
+    </script>
+</body>
+</html>
