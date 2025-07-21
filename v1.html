@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitly 2025 - Modern Fitness Assessment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff94;
+            --secondary: #03002c;
+            --accent: #9d4edd;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #03002c, #00114b);
+            color: var(--light);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+        
+        .space-grotesk {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        header {
+            background: linear-gradient(135deg, rgba(3, 0, 44, 0.8), rgba(0, 17, 75, 0.8));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1.5rem 0;
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), #00e6c3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        
+        .tagline {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .form-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .gender-selector {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .gender-option {
+            flex: 1;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .gender-option:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .gender-option.active {
+            border-color: var(--primary);
+            background: rgba(0, 255, 148, 0.1);
+        }
+        
+        .gender-option i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .value-display {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border: 3px solid var(--primary);
+            margin: 0 auto;
+            color: var(--primary);
+        }
+        
+        .form-range {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .form-range::-webkit-slider-thumb {
+            width: 25px;
+            height: 25px;
+            background: var(--primary);
+            border: none;
+        }
+        
+        .confirm-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        
+        .confirm-btn:hover {
+            background: rgba(0, 255, 148, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            gap: 1.5rem;
+        }
+        
+        .progress-step {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            position: relative;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .progress-step.active {
+            background: rgba(0, 255, 148, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .progress-step.completed {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .visualization {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .human-silhouette {
+            width: 150px;
+            height: 250px;
+            position: relative;
+            margin: 1rem 0;
+        }
+        
+        .body-part {
+            position: absolute;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .head {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            top: 0;
+            left: 45px;
+        }
+        
+        .torso {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            top: 60px;
+            left: 35px;
+        }
+        
+        .legs {
+            width: 20px;
+            height: 100px;
+            top: 140px;
+            left: 60px;
+        }
+        
+        .leg-left {
+            transform: rotate(10deg);
+            left: 45px;
+        }
+        
+        .leg-right {
+            transform: rotate(-10deg);
+            left: 75px;
+        }
+        
+        .arms {
+            width: 100px;
+            height: 20px;
+            top: 80px;
+        }
+        
+        .arm-left {
+            transform: rotate(45deg);
+            left: -10px;
+        }
+        
+        .arm-right {
+            transform: rotate(-45deg);
+            right: -10px;
+        }
+        
+        .result-badge {
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            color: var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .gender-option {
+                padding: 1rem 0.5rem;
+            }
+            
+            .gender-option i {
+                font-size: 2rem;
+            }
+            
+            .value-display {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+            
+            .progress-step {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .progress-step:not(:last-child)::after {
+                width: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8 text-center text-md-start">
+                    <h1 class="logo space-grotesk">FiTly</h1>
+                    <p class="tagline">Personalized Fitness Assessment for 2025</p>
+                </div>
+                <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                    <div class="result-badge">
+                        <i class="fas fa-chart-line me-2"></i>Health Analytics
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container mt-5">
+        <div class="progress-container">
+            <div class="progress-step completed">1</div>
+            <div class="progress-step active">2</div>
+            <div class="progress-step">3</div>
+            <div class="progress-step">4</div>
+        </div>
+        
+        <div class="row">
+            <!-- Gender Selection -->
+            <div class="col-lg-6">
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-venus-mars me-2"></i>Select Your Gender</h3>
+                    <div class="gender-selector">
+                        <div class="gender-option" onclick="selectGender('male')">
+                            <i class="fas fa-mars"></i>
+                            <div class="mt-2">Man</div>
+                        </div>
+                        <div class="gender-option active" onclick="selectGender('female')">
+                            <i class="fas fa-venus"></i>
+                            <div class="mt-2">Woman</div>
+                        </div>
+                    </div>
+                    <button class="confirm-btn" onclick="confirmGender()">
+                        Confirm <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Date of Birth -->
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-birthday-cake me-2"></i>Enter Your Date of Birth</h3>
+                    <div class="mb-4">
+                        <label class="form-label">Select your birth date</label>
+                        <input type="date" class="form-control bg-transparent text-white border-secondary" id="bdate" onchange="getDob()">
+                    </div>
+                    <div class="value-display" id="show-age">?</div>
+                    <button class="confirm-btn">
+                        Confirm <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <!-- Height & Weight -->
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-weight-scale me-2"></i>Body Measurements</h3>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Height: <span id="show-height">5'7"</span></label>
+                        <input type="range" class="form-range" id="body-height" value="67" min="21" max="100" onchange="getHeight()">
+                        <div class="d-flex justify-content-between text-muted mt-1">
+                            <small>4'</small>
+                            <small>6'</small>
+                            <small>8'</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Weight: <span id="show-weight">68 Kg</span></label>
+                        <input type="range" class="form-range" id="body-weight" value="68" min="1" max="160" onchange="getWeight()">
+                        <div class="d-flex justify-content-between text-muted mt-1">
+                            <small>40 Kg</small>
+                            <small>100 Kg</small>
+                            <small>160 Kg</small>
+                        </div>
+                    </div>
+                    
+                    <div class="value-display" id="show-bmi">23.5</div>
+                    <div class="text-center mt-2">BMI</div>
+                    
+                    <button class="confirm-btn">
+                        Analyze <i class="fas fa-chart-simple ms-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Visualization -->
+                <div class="glass-card">
+                    <h3 class="section-title"><i class="fas fa-person-running me-2"></i>Body Visualization</h3>
+                    <div class="visualization">
+                        <div class="human-silhouette">
+                            <div class="body-part head"></div>
+                            <div class="body-part torso"></div>
+                            <div class="body-part legs leg-left"></div>
+                            <div class="body-part legs leg-right"></div>
+                            <div class="body-part arms arm-left"></div>
+                            <div class="body-part arms arm-right"></div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <div class="d-flex justify-content-center gap-4">
+                                <div>
+                                    <div class="fs-5" id="show-height-value">5'7"</div>
+                                    <small>Height</small>
+                                </div>
+                                <div>
+                                    <div class="fs-5" id="show-weight-value">68 Kg</div>
+                                    <small>Weight</small>
+                                </div>
+                                <div>
+                                    <div class="fs-5" id="show-age-value">32</div>
+                                    <small>Age</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize with default values
+        document.addEventListener('DOMContentLoaded', function() {
+            getHeight();
+            getWeight();
+            updateVisualization();
+        });
+        
+        function selectGender(gender) {
+            document.querySelectorAll('.gender-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            if(gender === 'male') {
+                document.querySelector('.gender-option:nth-child(1)').classList.add('active');
+            } else {
+                document.querySelector('.gender-option:nth-child(2)').classList.add('active');
+            }
+        }
+        
+        function confirmGender() {
+            // In a real app, this would progress to next step
+            document.querySelector('.progress-step:nth-child(2)').classList.add('completed');
+            document.querySelector('.progress-step:nth-child(2)').classList.remove('active');
+            document.querySelector('.progress-step:nth-child(3)').classList.add('active');
+        }
+        
+        function getDob() {
+            let dob = document.getElementById('bdate').value;
+            
+            if(!dob) return;
+            
+            const bDate = new Date(dob);
+            const cDate = new Date();
+            let ageY = cDate.getFullYear() - bDate.getFullYear();
+            
+            // Adjust if birthday hasn't occurred yet this year
+            if (cDate.getMonth() < bDate.getMonth() || 
+                (cDate.getMonth() === bDate.getMonth() && cDate.getDate() < bDate.getDate())) {
+                ageY--;
+            }
+            
+            document.getElementById("show-age").innerHTML = ageY;
+            document.getElementById("show-age-value").innerHTML = ageY;
+            
+            // Progress to next step
+            document.querySelector('.progress-step:nth-child(3)').classList.add('completed');
+            document.querySelector('.progress-step:nth-child(3)').classList.remove('active');
+            document.querySelector('.progress-step:nth-child(4)').classList.add('active');
+        }
+        
+        function getWeight() {
+            let bWeight = document.getElementById("body-weight").value;
+            document.getElementById("show-weight").innerHTML = bWeight + " Kg";
+            document.getElementById("show-weight-value").innerHTML = bWeight + " Kg";
+            updateBMI();
+        }
+        
+        function getHeight() {
+            let bHeight = document.getElementById("body-height").value;
+            let hFeet = parseInt(bHeight / 12); 
+            let hInch = parseInt(bHeight % 12);
+            document.getElementById("show-height").innerHTML = hFeet + "'" + hInch + '"';
+            document.getElementById("show-height-value").innerHTML = hFeet + "'" + hInch + '"';
+            updateBMI();
+        }
+        
+        function updateBMI() {
+            let height = document.getElementById("body-height").value; // in inches
+            let weight = document.getElementById("body-weight").value; // in kg
+            
+            if(height > 0 && weight > 0) {
+                // Convert height to meters: inches * 0.0254
+                let heightM = height * 0.0254;
+                let bmi = (weight / (heightM * heightM)).toFixed(1);
+                document.getElementById("show-bmi").innerHTML = bmi;
+            }
+        }
+        
+        function updateVisualization() {
+            // In a real app, this would update the visualization based on inputs
+        }
+    </script>
+</body>
+</html>
