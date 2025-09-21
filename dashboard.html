@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health & Wellness Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #00FF94;
+            --secondary: #03002C;
+            --accent: #00647A;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --underweight: #4fa9eb;
+            --normal: #8bc34a;
+            --overweight: #ffc107;
+            --obese: #f44336;
+        }
+        
+        body {
+            background-color: #f5f7f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(121.28deg, var(--secondary) 0%, var(--primary) 100%);
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: none;
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(121.28deg, var(--secondary) 0%, var(--accent) 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .progress {
+            height: 20px;
+            border-radius: 10px;
+        }
+        
+        .water-card {
+            background: linear-gradient(120deg, #4fa9eb 0%, #c5e3f6 100%);
+            color: white;
+        }
+        
+        .sleep-card {
+            background: linear-gradient(120deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .nutrition-card {
+            background: linear-gradient(120deg, #8bc34a 0%, #cddc39 100%);
+            color: white;
+        }
+        
+        .exercise-card {
+            background: linear-gradient(120deg, #ff9800 0%, #ffc107 100%);
+            color: white;
+        }
+        
+        .tips-card {
+            background: linear-gradient(120deg, #f44336 0%, #ff9800 100%);
+            color: white;
+        }
+        
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .bmi-scale {
+            height: 30px;
+            background: linear-gradient(90deg, var(--underweight), var(--normal), var(--overweight), var(--obese));
+            border-radius: 15px;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .bmi-marker {
+            position: absolute;
+            top: -10px;
+            width: 20px;
+            height: 50px;
+            background: transparent;
+            border-left: 3px dashed white;
+            transform: translateX(-50%);
+        }
+        
+        .bmi-marker-label {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            white-space: nowrap;
+            color: var(--dark);
+            font-weight: bold;
+        }
+        
+        .recommendation-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .recommendation-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .recommendation-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .input-card {
+            background: white;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: #00e085;
+            border-color: #00e085;
+            color: var(--secondary);
+        }
+        
+        .water-progress {
+            background-color: #c5e3f6;
+        }
+        
+        .water-progress .progress-bar {
+            background-color: #4fa9eb;
+        }
+        
+        .sleep-progress {
+            background-color: #b6c8f9;
+        }
+        
+        .sleep-progress .progress-bar {
+            background-color: #6a11cb;
+        }
+        
+        @media (max-width: 768px) {
+            .display-4 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-heart-pulse-fill me-2"></i>Health & Wellness Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">BMI Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Nutrition</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Exercise</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">Your Health Dashboard</h1>
+                    <p class="lead">Personalized wellness recommendations based on your BMI</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="display-3 fw-bold">22.5</div>
+                    <div class="h5">Normal Weight BMI</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card input-card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Enter Your Details</h4>
+                        <form id="health-form">
+                            <div class="mb-3">
+                                <label class="form-label">Your BMI</label>
+                                <input type="number" class="form-control" id="bmi-input" placeholder="Enter your BMI" value="22.5">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Weight (kg)</label>
+                                <input type="number" class="form-control" id="weight-input" placeholder="Enter your weight">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Activity Level</label>
+                                <select class="form-select" id="activity-level">
+                                    <option value="sedentary">Sedentary (little or no exercise)</option>
+                                    <option value="light">Lightly active (light exercise 1-3 days/week)</option>
+                                    <option value="moderate" selected>Moderately active (moderate exercise 3-5 days/week)</option>
+                                    <option value="active">Very active (hard exercise 6-7 days/week)</option>
+                                    <option value="extra">Extra active (very hard exercise, physical job)</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary w-100" onclick="calculateRecommendations()">
+                                Calculate Recommendations
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card input-card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Your BMI Scale</h4>
+                        <div class="bmi-scale">
+                            <div class="bmi-marker" style="left: 18.5%;">
+                                <div class="bmi-marker-label">18.5</div>
+                            </div>
+                            <div class="bmi-marker" style="left: 25%;">
+                                <div class="bmi-marker-label">25</div>
+                            </div>
+                            <div class="bmi-marker" style="left: 30%;">
+                                <div class="bmi-marker-label">30</div>
+                            </div>
+                            <div id="bmi-indicator" style="position: absolute; top: -20px; left: 45%; transform: translateX(-50%);">
+                                <i class="bi bi-caret-down-fill text-dark" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-3">
+                                <span class="badge bg-info">Underweight</span>
+                            </div>
+                            <div class="col-3">
+                                <span class="badge bg-success">Normal</span>
+                            </div>
+                            <div class="col-3">
+                                <span class="badge bg-warning">Overweight</span>
+                            </div>
+                            <div class="col-3">
+                                <span class="badge bg-danger">Obese</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="row mt-4">
+            <!-- Water Consumption -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card water-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="bi bi-droplet-fill category-icon"></i>
+                        </div>
+                        <h4 class="card-title">Water Consumption</h4>
+                        <p class="card-text">Recommended daily water intake:</p>
+                        <h2 class="display-5 fw-bold">2.5 Liters</h2>
+                        
+                        <div class="progress water-progress mt-4">
+                            <div class="progress-bar" role="progressbar" style="width: 65%;">65%</div>
+                        </div>
+                        <p class="mt-2">Track your water intake (8/12 glasses)</p>
+                        
+                        <ul class="recommendation-list mt-4">
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Drink 2 glasses after waking up</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>1 glass before each meal</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Keep a water bottle handy</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sleep -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card sleep-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="bi bi-moon-stars-fill category-icon"></i>
+                        </div>
+                        <h4 class="card-title">Sleep Requirements</h4>
+                        <p class="card-text">Recommended nightly sleep:</p>
+                        <h2 class="display-5 fw-bold">7-9 Hours</h2>
+                        
+                        <div class="progress sleep-progress mt-4">
+                            <div class="progress-bar" role="progressbar" style="width: 85%;">85%</div>
+                        </div>
+                        <p class="mt-2">Your average: 7.5 hours</p>
+                        
+                        <ul class="recommendation-list mt-4">
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Maintain consistent sleep schedule</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Avoid screens 1 hour before bed</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Keep your bedroom cool and dark</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nutrition -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card nutrition-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="bi bi-egg-fried category-icon"></i>
+                        </div>
+                        <h4 class="card-title">Nutrition Plan</h4>
+                        <p class="card-text">Recommended daily calorie intake:</p>
+                        <h2 class="display-5 fw-bold">2,100 Calories</h2>
+                        
+                        <div class="mt-4">
+                            <h5>Macro Distribution</h5>
+                            <div class="progress mt-2" style="height: 10px;">
+                                <div class="progress-bar bg-danger" style="width: 25%">Carbs 25%</div>
+                                <div class="progress-bar bg-success" style="width: 35%">Protein 35%</div>
+                                <div class="progress-bar bg-warning" style="width: 40%">Fats 40%</div>
+                            </div>
+                        </div>
+                        
+                        <ul class="recommendation-list mt-4">
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Focus on lean proteins</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Include healthy fats</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Eat complex carbohydrates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercise -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card exercise-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="bi bi-bicycle category-icon"></i>
+                        </div>
+                        <h4 class="card-title">Exercise Plan</h4>
+                        <p class="card-text">Weekly exercise recommendation:</p>
+                        <h2 class="display-5 fw-bold">150 Minutes</h2>
+                        
+                        <div class="mt-4">
+                            <h5>This Week's Progress</h5>
+                            <div class="progress mt-2">
+                                <div class="progress-bar" role="progressbar" style="width: 60%;">90/150 mins</div>
+                            </div>
+                        </div>
+                        
+                        <ul class="recommendation-list mt-4">
+                            <li><i class="bi bi-check-circle-fill me-2"></i>30 mins cardio, 5 days/week</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Strength training, 2 days/week</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Include flexibility exercises</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tips & Tricks -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card tips-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="bi bi-lightbulb-fill category-icon"></i>
+                        </div>
+                        <h4 class="card-title">Wellness Tips</h4>
+                        <p class="card-text">Personalized recommendations for your BMI category:</p>
+                        
+                        <ul class="recommendation-list mt-4">
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Maintain a balanced diet with portion control</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Practice stress-reduction techniques</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Get regular health check-ups</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Limit processed foods and sugars</li>
+                            <li><i class="bi bi-check-circle-fill me-2"></i>Stay consistent with your exercise routine</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weekly Plan -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Weekly Wellness Plan</h4>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Exercise</th>
+                                        <th>Water</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Monday</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                        <td><div class="progress" style="height: 10px; width: 80px;">
+                                            <div class="progress-bar bg-info" style="width: 80%"></div>
+                                        </div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tuesday</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                        <td><div class="progress" style="height: 10px; width: 80px;">
+                                            <div class="progress-bar bg-info" style="width: 100%"></div>
+                                        </div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Wednesday</td>
+                                        <td><span class="badge bg-warning">Pending</span></td>
+                                        <td><div class="progress" style="height: 10px; width: 80px;">
+                                            <div class="progress-bar bg-info" style="width: 40%"></div>
+                                        </div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thursday</td>
+                                        <td><span class="badge bg-secondary">Upcoming</span></td>
+                                        <td><div class="progress" style="height: 10px; width: 80px;">
+                                            <div class="progress-bar bg-info" style="width: 0%"></div>
+                                        </div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Friday</td>
+                                        <td><span class="badge bg-secondary">Upcoming</span></td>
+                                        <td><div class="progress" style="height: 10px; width: 80px;">
+                                            <div class="progress-bar bg-info" style="width: 0%"></div>
+                                        </div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Health & Wellness Dashboard</h5>
+                    <p>Your personalized health assistant</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">© 2025 FitlY - Stay Fit. All rights reserved.</p>
+                    <p class="mb-0"><small>Disclaimer: This is for informational purposes only. Consult a healthcare professional for medical advice.</small></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to calculate recommendations based on BMI
+        function calculateRecommendations() {
+            const bmi = parseFloat(document.getElementById('bmi-input').value);
+            const weight = parseFloat(document.getElementById('weight-input').value);
+            const activityLevel = document.getElementById('activity-level').value;
+            
+            if (isNaN(bmi) || bmi <= 0) {
+                alert('Please enter a valid BMI value');
+                return;
+            }
+            
+            // Update BMI indicator position
+            updateBMIIndicator(bmi);
+            
+            // Calculate water intake (35ml per kg of body weight)
+            let waterIntake = 2.5; // Default
+            if (!isNaN(weight) && weight > 0) {
+                waterIntake = (weight * 0.035).toFixed(1);
+            }
+            
+            // Update water recommendation
+            document.querySelector('.water-card h2').textContent = waterIntake + ' Liters';
+            
+            // Calculate calorie intake based on activity level and weight
+            let calorieIntake = 2100; // Default
+            if (!isNaN(weight) && weight > 0) {
+                let baseCalories = weight * 25;
+                
+                // Adjust based on activity level
+                switch(activityLevel) {
+                    case 'sedentary':
+                        calorieIntake = baseCalories * 1.2;
+                        break;
+                    case 'light':
+                        calorieIntake = baseCalories * 1.375;
+                        break;
+                    case 'moderate':
+                        calorieIntake = baseCalories * 1.55;
+                        break;
+                    case 'active':
+                        calorieIntake = baseCalories * 1.725;
+                        break;
+                    case 'extra':
+                        calorieIntake = baseCalories * 1.9;
+                        break;
+                }
+                
+                calorieIntake = Math.round(calorieIntake);
+            }
+            
+            // Update calorie recommendation
+            document.querySelector('.nutrition-card h2').textContent = calorieIntake.toLocaleString() + ' Calories';
+            
+            // Adjust recommendations based on BMI category
+            let bmiCategory = '';
+            let tips = [];
+            
+            if (bmi < 18.5) {
+                bmiCategory = 'Underweight';
+                tips = [
+                    'Increase calorie intake with nutrient-dense foods',
+                    'Focus on strength training to build muscle mass',
+                    'Eat frequent, smaller meals throughout the day',
+                    'Include healthy fats like avocados and nuts',
+                    'Consider consulting a nutritionist for personalized advice'
+                ];
+                
+                // Adjust macros for underweight
+                document.querySelector('.nutrition-card .progress-bar:nth-child(1)').style.width = '30%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(1)').textContent = 'Carbs 30%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(2)').style.width = '30%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(2)').textContent = 'Protein 30%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(3)').style.width = '40%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(3)').textContent = 'Fats 40%';
+                
+            } else if (bmi >= 18.5 && bmi < 25) {
+                bmiCategory = 'Normal Weight';
+                tips = [
+                    'Maintain a balanced diet with portion control',
+                    'Continue regular exercise routine',
+                    'Stay hydrated throughout the day',
+                    'Get adequate sleep for recovery',
+                    'Monitor your weight monthly to maintain healthy range'
+                ];
+                
+            } else if (bmi >= 25 && bmi < 30) {
+                bmiCategory = 'Overweight';
+                tips = [
+                    'Create a moderate calorie deficit for weight loss',
+                    'Focus on cardiovascular exercises',
+                    'Limit processed foods and sugars',
+                    'Increase fiber intake for satiety',
+                    'Set realistic weight loss goals (0.5-1kg per week)'
+                ];
+                
+                // Adjust macros for overweight
+                document.querySelector('.nutrition-card .progress-bar:nth-child(1)').style.width = '25%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(1)').textContent = 'Carbs 25%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(2)').style.width = '35%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(2)').textContent = 'Protein 35%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(3)').style.width = '40%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(3)').textContent = 'Fats 40%';
+                
+            } else {
+                bmiCategory = 'Obese';
+                tips = [
+                    'Consult with a healthcare provider before starting any program',
+                    'Aim for gradual weight loss (1-2kg per week)',
+                    'Focus on low-impact exercises to reduce joint stress',
+                    'Consider working with a registered dietitian',
+                    'Practice mindful eating and address emotional eating patterns'
+                ];
+                
+                // Adjust macros for obese
+                document.querySelector('.nutrition-card .progress-bar:nth-child(1)').style.width = '20%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(1)').textContent = 'Carbs 20%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(2)').style.width = '40%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(2)').textContent = 'Protein 40%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(3)').style.width = '40%';
+                document.querySelector('.nutrition-card .progress-bar:nth-child(3)').textContent = 'Fats 40%';
+            }
+            
+            // Update BMI category display
+            document.querySelector('.dashboard-header .display-3').textContent = bmi;
+            document.querySelector('.dashboard-header .h5').textContent = bmiCategory + ' BMI';
+            
+            // Update tips
+            const tipsList = document.querySelector('.tips-card .recommendation-list');
+            tipsList.innerHTML = '';
+            
+            tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>' + tip;
+                tipsList.appendChild(li);
+            });
+            
+            // Show success message
+            alert('Recommendations updated based on your BMI of ' + bmi + ' (' + bmiCategory + ')');
+        }
+        
+        // Function to update BMI indicator position
+        function updateBMIIndicator(bmi) {
+            const indicator = document.getElementById('bmi-indicator');
+            let position;
+            
+            if (bmi < 18.5) {
+                position = (bmi / 18.5) * 18.5;
+            } else if (bmi < 25) {
+                position = 18.5 + ((bmi - 18.5) / 6.5) * 24.5;
+            } else if (bmi < 30) {
+                position = 43 + ((bmi - 25) / 5) * 30;
+            } else {
+                position = 73 + (Math.min(bmi - 30, 20) / 20) * 27;
+            }
+            
+            // Cap at 100%
+            position = Math.min(position, 100);
+            
+            indicator.style.left = `${position}%`;
+        }
+        
+        // Initialize with default values
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBMIIndicator(22.5);
+        });
+    </script>
+</body>
+</html>
