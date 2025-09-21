@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EyeSight Pro - Vision Testing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #0061a8;
+            --secondary: #6c757d;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #f0f8ff;
+        }
+        
+        body {
+            background-color: var(--background);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        
+        .test-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .test-card {
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+            border: none;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #003f6d 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .test-button {
+            background-color: var(--primary);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .test-button:hover {
+            background-color: #004980;
+            transform: scale(1.05);
+        }
+        
+        .option-button {
+            background-color: #e9ecef;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option-button:hover {
+            background-color: #dee2e6;
+        }
+        
+        .option-button.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .progress-bar {
+            background-color: var(--primary);
+        }
+        
+        .test-display {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .visual-acuity-test {
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .color-test-plate {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .contrast-test {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 100px;
+            margin: 0 auto 20px;
+            overflow: hidden;
+        }
+        
+        .gauge {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            background: conic-gradient(#4caf50 0% 33%, #ffc107 33% 66%, #f44336 66% 100%);
+            mask: radial-gradient(transparent 70px, #000 71px);
+        }
+        
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            width: 4px;
+            height: 100px;
+            background: #333;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 1s ease-in-out;
+        }
+        
+        .gauge-center {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #333;
+            border-radius: 50%;
+        }
+        
+        .instruction-box {
+            background-color: #e9f5ff;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .test-container {
+                padding: 15px;
+            }
+            
+            .color-test-plate {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="header-section text-center">
+            <h1 class="display-4 fw-bold"><i class="bi bi-eye-fill me-2"></i>EyeSight Pro</h1>
+            <p class="lead">Comprehensive vision testing to evaluate your eyesight condition</p>
+        </div>
+
+        <!-- Introduction -->
+        <div class="test-container">
+            <h2 class="mb-4">Welcome to Your Vision Test</h2>
+            <p>This comprehensive test will evaluate three aspects of your vision:</p>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="test-card card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-textarea-t display-4 text-primary mb-3"></i>
+                            <h5>Visual Acuity</h5>
+                            <p class="card-text">Measures how clearly you see details</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="test-card card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-palette-fill display-4 text-primary mb-3"></i>
+                            <h5>Color Vision</h5>
+                            <p class="card-text">Tests your ability to distinguish colors</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="test-card card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-circle-half display-4 text-primary mb-3"></i>
+                            <h5>Contrast Sensitivity</h5>
+                            <p class="card-text">Measures ability to distinguish between light and dark</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instruction-box">
+                <h5><i class="bi bi-info-circle-fill text-primary me-2"></i>Before You Begin</h5>
+                <ul class="mb-0">
+                    <li>Ensure you're in a well-lit room</li>
+                    <li>Position yourself about 3 feet from the screen</li>
+                    <li>If you wear glasses or contacts, keep them on</li>
+                    <li>Take your time and don't strain your eyes</li>
+                </ul>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button id="start-test" class="test-button btn btn-primary btn-lg">
+                    Start Vision Test <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Test Progress -->
+        <div class="test-container d-none" id="test-progress-container">
+            <h4 class="mb-3">Test Progress</h4>
+            <div class="progress mb-4" style="height: 20px;">
+                <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+            
+            <!-- Test Content will be loaded here -->
+            <div id="test-content"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="test-container d-none" id="results-container">
+            <h2 class="text-center mb-4">Your Vision Test Results</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="result-card">
+                        <h5><i class="bi bi-textarea-t text-primary me-2"></i>Visual Acuity</h5>
+                        <div class="gauge-container">
+                            <div class="gauge" id="acuity-gauge"></div>
+                            <div class="gauge-needle" id="acuity-needle"></div>
+                            <div class="gauge-center"></div>
+                        </div>
+                        <p class="text-center" id="acuity-result">Score: Calculating...</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="result-card">
+                        <h5><i class="bi bi-palette-fill text-primary me-2"></i>Color Vision</h5>
+                        <div class="gauge-container">
+                            <div class="gauge" id="color-gauge"></div>
+                            <div class="gauge-needle" id="color-needle"></div>
+                            <div class="gauge-center"></div>
+                        </div>
+                        <p class="text-center" id="color-result">Score: Calculating...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-card mt-4">
+                <h5><i class="bi bi-circle-half text-primary me-2"></i>Contrast Sensitivity</h5>
+                <div class="gauge-container">
+                    <div class="gauge" id="contrast-gauge"></div>
+                    <div class="gauge-needle" id="contrast-needle"></div>
+                    <div class="gauge-center"></div>
+                </div>
+                <p class="text-center" id="contrast-result">Score: Calculating...</p>
+            </div>
+            
+            <div class="result-card mt-4">
+                <h5><i class="bi bi-clipboard-check text-primary me-2"></i>Overall Vision Assessment</h5>
+                <p id="overall-assessment" class="lead">Calculating your results...</p>
+                
+                <div class="mt-4">
+                    <h6>Recommendations:</h6>
+                    <ul id="recommendations-list">
+                        <li>Your personalized recommendations will appear here</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button id="restart-test" class="test-button btn btn-primary">
+                    <i class="bi bi-arrow-repeat me-2"></i>Take Test Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-5 py-4 text-muted">
+            <p>EyeSight Pro is not a substitute for a professional eye examination. Always consult with an eye care professional for accurate diagnosis.</p>
+            <p class="mb-0">© 2023 EyeSight Pro. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test state management
+            const testState = {
+                currentTest: 0,
+                progress: 0,
+                tests: [
+                    {
+                        type: 'acuity',
+                        title: 'Visual Acuity Test',
+                        instructions: 'Read the letters from top to bottom. Select the smallest line where you can accurately identify most letters.',
+                        questions: [],
+                        score: 0
+                    },
+                    {
+                        type: 'color',
+                        title: 'Color Vision Test',
+                        instructions: 'What number do you see in the circle? If no number is visible, select "No number visible".',
+                        questions: [],
+                        score: 0
+                    },
+                    {
+                        type: 'contrast',
+                        title: 'Contrast Sensitivity Test',
+                        instructions: 'Can you see the faint gray bar on the right side? Select the last pattern where you can clearly see the bar.',
+                        questions: [],
+                        score: 0
+                    }
+                ],
+                currentQuestion: 0,
+                answers: []
+            };
+
+            // DOM Elements
+            const startTestBtn = document.getElementById('start-test');
+            const testProgressContainer = document.getElementById('test-progress-container');
+            const testContent = document.getElementById('test-content');
+            const resultsContainer = document.getElementById('results-container');
+            const progressBar = document.querySelector('.progress-bar');
+            const restartTestBtn = document.getElementById('restart-test');
+
+            // Initialize tests
+            initializeTests();
+
+            // Event Listeners
+            startTestBtn.addEventListener('click', startTest);
+            restartTestBtn.addEventListener('click', restartTest);
+
+            // Initialize the tests with questions
+            function initializeTests() {
+                // Visual Acuity Test - Generate random letters in decreasing size
+                for (let i = 0; i < 8; i++) {
+                    const lineSize = 100 - (i * 10);
+                    const letters = generateRandomLetters(4 + i);
+                    testState.tests[0].questions.push({
+                        size: lineSize,
+                        letters: letters,
+                        correctAnswer: letters
+                    });
+                }
+
+                // Color Vision Test - Simulate Ishihara plates
+                testState.tests[1].questions = [
+                    { color: 'radial-gradient(circle, #f44336, #9c27b0)', answer: '12', options: ['12', '8', '6', 'No number visible'] },
+                    { color: 'radial-gradient(circle, #4caf50, #8bc34a)', answer: '8', options: ['3', '8', '9', 'No number visible'] },
+                    { color: 'radial-gradient(circle, #2196f3, #3f51b5)', answer: '6', options: ['5', '6', '9', 'No number visible'] },
+                    { color: 'radial-gradient(circle, #ff9800, #f44336)', answer: '29', options: ['12', '29', '70', 'No number visible'] },
+                    { color: 'radial-gradient(circle, #9c27b0, #673ab7)', answer: '5', options: ['5', '3', '2', 'No number visible'] },
+                    { color: 'radial-gradient(circle, #009688, #4caf50)', answer: '7', options: ['1', '7', '4', 'No number visible'] }
+                ];
+
+                // Contrast Sensitivity Test
+                testState.tests[2].questions = [
+                    { contrast: 90, correct: true },
+                    { contrast: 80, correct: true },
+                    { contrast: 70, correct: true },
+                    { contrast: 60, correct: true },
+                    { contrast: 50, correct: true },
+                    { contrast: 40, correct: true },
+                    { contrast: 30, correct: true },
+                    { contrast: 20, correct: true },
+                    { contrast: 15, correct: true },
+                    { contrast: 10, correct: true }
+                ];
+            }
+
+            // Start the test
+            function startTest() {
+                document.querySelector('.test-container').classList.add('d-none');
+                testProgressContainer.classList.remove('d-none');
+                loadTest();
+            }
+
+            // Load the current test
+            function loadTest() {
+                const currentTest = testState.tests[testState.currentTest];
+                testState.currentQuestion = 0;
+                
+                // Update progress bar
+                updateProgressBar();
+                
+                // Load the first question of the current test
+                loadQuestion();
+            }
+
+            // Load a question
+            function loadQuestion() {
+                const currentTest = testState.tests[testState.currentTest];
+                const question = currentTest.questions[testState.currentQuestion];
+                
+                testContent.innerHTML = '';
+                
+                // Create question HTML based on test type
+                switch (currentTest.type) {
+                    case 'acuity':
+                        testContent.innerHTML = createAcuityQuestion(question);
+                        break;
+                    case 'color':
+                        testContent.innerHTML = createColorQuestion(question);
+                        break;
+                    case 'contrast':
+                        testContent.innerHTML = createContrastQuestion(question);
+                        break;
+                }
+                
+                // Add event listeners to options
+                setTimeout(() => {
+                    const options = document.querySelectorAll('.option-button');
+                    options.forEach(option => {
+                        option.addEventListener('click', function() {
+                            options.forEach(btn => btn.classList.remove('selected'));
+                            this.classList.add('selected');
+                        });
+                    });
+                    
+                    // Add event listener to next button
+                    document.getElementById('next-question').addEventListener('click', nextQuestion);
+                }, 100);
+            }
+
+            // Create Visual Acuity Question
+            function createAcuityQuestion(question) {
+                return `
+                    <h3>${testState.tests[0].title}</h3>
+                    <p class="instruction-box">${testState.tests[0].instructions}</p>
+                    
+                    <div class="test-display">
+                        <div class="visual-acuity-test" style="font-size: ${question.size}px;">
+                            ${question.letters.split('').join(' ')}
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <p>Can you read this line clearly?</p>
+                        <button class="option-button btn" data-answer="yes">Yes, I can read it</button>
+                        <button class="option-button btn" data-answer="no">No, it's unclear</button>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button id="next-question" class="test-button btn">Next Question</button>
+                    </div>
+                `;
+            }
+
+            // Create Color Vision Question
+            function createColorQuestion(question) {
+                let optionsHTML = '';
+                question.options.forEach(option => {
+                    optionsHTML += `<button class="option-button btn" data-answer="${option}">${option}</button>`;
+                });
+                
+                return `
+                    <h3>${testState.tests[1].title}</h3>
+                    <p class="instruction-box">${testState.tests[1].instructions}</p>
+                    
+                    <div class="test-display">
+                        <div class="color-test-plate" style="background: ${question.color};">
+                            <span style="opacity: 0.3;">Hidden number</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        ${optionsHTML}
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button id="next-question" class="test-button btn">Next Question</button>
+                    </div>
+                `;
+            }
+
+            // Create Contrast Sensitivity Question
+            function createContrastQuestion(question) {
+                return `
+                    <h3>${testState.tests[2].title}</h3>
+                    <p class="instruction-box">${testState.tests[2].instructions}</p>
+                    
+                    <div class="test-display">
+                        <div class="contrast-test" style="background: linear-gradient(to right, #f8f9fa ${100-question.contrast}%, #${getGrayHex(question.contrast)} ${100-question.contrast}%, #${getGrayHex(question.contrast)} 100%);">
+                            <div style="width: 100%; height: 100px; position: relative;">
+                                <div style="position: absolute; right: 0; top: 0; width: 30px; height: 100px; background-color: #${getGrayHex(question.contrast)};"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <p>Can you see the vertical bar on the right side?</p>
+                        <button class="option-button btn" data-answer="yes">Yes, I can see it</button>
+                        <button class="option-button btn" data-answer="no">No, I can't see it</button>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button id="next-question" class="test-button btn">Next Question</button>
+                    </div>
+                `;
+            }
+
+            // Next question handler
+            function nextQuestion() {
+                const selectedOption = document.querySelector('.option-button.selected');
+                
+                if (!selectedOption) {
+                    alert('Please select an answer before continuing.');
+                    return;
+                }
+                
+                const answer = selectedOption.dataset.answer;
+                const currentTest = testState.tests[testState.currentTest];
+                
+                // Store the answer
+                testState.answers.push({
+                    test: currentTest.type,
+                    question: testState.currentQuestion,
+                    answer: answer
+                });
+                
+                // Move to next question or finish test
+                testState.currentQuestion++;
+                
+                if (testState.currentQuestion >= currentTest.questions.length) {
+                    finishTest();
+                } else {
+                    loadQuestion();
+                }
+            }
+
+            // Finish the current test
+            function finishTest() {
+                testState.currentTest++;
+                
+                if (testState.currentTest >= testState.tests.length) {
+                    // All tests completed
+                    calculateResults();
+                    showResults();
+                } else {
+                    // Load next test
+                    loadTest();
+                }
+            }
+
+            // Calculate results
+            function calculateResults() {
+                // Calculate scores for each test
+                testState.tests.forEach(test => {
+                    let score = 0;
+                    
+                    switch(test.type) {
+                        case 'acuity':
+                            // For acuity, higher line numbers are better
+                            for (let i = 0; i < test.questions.length; i++) {
+                                const answer = testState.answers.find(a => 
+                                    a.test === 'acuity' && a.question === i);
+                                
+                                if (answer && answer.answer === 'yes') {
+                                    score = i + 1;
+                                }
+                            }
+                            break;
+                            
+                        case 'color':
+                            // For color vision, count correct answers
+                            for (let i = 0; i < test.questions.length; i++) {
+                                const answer = testState.answers.find(a => 
+                                    a.test === 'color' && a.question === i);
+                                
+                                if (answer && answer.answer === test.questions[i].answer) {
+                                    score++;
+                                }
+                            }
+                            break;
+                            
+                        case 'contrast':
+                            // For contrast, find the lowest contrast level detected
+                            for (let i = 0; i < test.questions.length; i++) {
+                                const answer = testState.answers.find(a => 
+                                    a.test === 'contrast' && a.question === i);
+                                
+                                if (answer && answer.answer === 'yes') {
+                                    score = test.questions[i].contrast;
+                                } else {
+                                    break;
+                                }
+                            }
+                            break;
+                    }
+                    
+                    test.score = score;
+                });
+            }
+
+            // Show results
+            function showResults() {
+                testProgressContainer.classList.add('d-none');
+                resultsContainer.classList.remove('d-none');
+                
+                // Update result gauges and text
+                updateGauge('acuity', testState.tests[0].score, 8, '20/20 vision or better', 'Potential visual acuity issues');
+                updateGauge('color', testState.tests[1].score, 6, 'Normal color vision', 'Potential color vision deficiency');
+                updateGauge('contrast', testState.tests[2].score, 10, 'Excellent contrast sensitivity', 'Reduced contrast sensitivity');
+                
+                // Set result text
+                document.getElementById('acuity-result').textContent = `Score: ${testState.tests[0].score}/8 (${getAcuityRating(testState.tests[0].score)})`;
+                document.getElementById('color-result').textContent = `Score: ${testState.tests[1].score}/6 (${getColorRating(testState.tests[1].score)})`;
+                document.getElementById('contrast-result').textContent = `Score: ${testState.tests[2].score}/10 (${getContrastRating(testState.tests[2].score)})`;
+                
+                // Set overall assessment and recommendations
+                const overall = calculateOverallAssessment();
+                document.getElementById('overall-assessment').textContent = overall.assessment;
+                
+                const recommendationsList = document.getElementById('recommendations-list');
+                recommendationsList.innerHTML = '';
+                overall.recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    recommendationsList.appendChild(li);
+                });
+            }
+
+            // Update gauge visualization
+            function updateGauge(type, score, max, goodText, badText) {
+                const needle = document.getElementById(`${type}-needle`);
+                const resultElement = document.getElementById(`${type}-result`);
+                
+                // Calculate rotation (0deg = left, 90deg = middle, 180deg = right)
+                const percentage = score / max;
+                let rotation = 90 * percentage; // 0 to 90 degrees for the first half
+                
+                if (percentage > 0.5) {
+                    rotation = 90 + (90 * (percentage - 0.5) / 0.5); // 90 to 180 degrees for the second half
+                }
+                
+                needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            }
+
+            // Calculate overall assessment
+            function calculateOverallAssessment() {
+                const acuityScore = testState.tests[0].score / 8;
+                const colorScore = testState.tests[1].score / 6;
+                const contrastScore = testState.tests[2].score / 10;
+                
+                const averageScore = (acuityScore + colorScore + contrastScore) / 3;
+                
+                let assessment = '';
+                let recommendations = [];
+                
+                if (averageScore >= 0.8) {
+                    assessment = 'Excellent Vision Health';
+                    recommendations = [
+                        'Your vision appears to be in excellent condition.',
+                        'Continue with regular eye check-ups every 2 years.',
+                        'Maintain good screen habits with the 20-20-20 rule (every 20 minutes, look at something 20 feet away for 20 seconds).'
+                    ];
+                } else if (averageScore >= 0.6) {
+                    assessment = 'Good Vision Health';
+                    recommendations = [
+                        'Your vision is generally good but could use some improvement.',
+                        'Consider getting a professional eye examination.',
+                        'Practice eye exercises to maintain good vision health.',
+                        'Ensure proper lighting when reading or using screens.'
+                    ];
+                } else if (averageScore >= 0.4) {
+                    assessment = 'Fair Vision Health';
+                    recommendations = [
+                        'Your vision shows some signs of impairment.',
+                        'We recommend scheduling a professional eye examination soon.',
+                        'Reduce screen time and take frequent breaks.',
+                        'Ensure you have adequate lighting for all visual tasks.'
+                    ];
+                } else {
+                    assessment = 'Needs Improvement';
+                    recommendations = [
+                        'Your vision test results indicate significant impairment.',
+                        'Schedule a comprehensive eye examination with an optometrist as soon as possible.',
+                        'Discuss your test results with your eye care professional.',
+                        'Consider vision correction options if recommended by your eye doctor.'
+                    ];
+                }
+                
+                return { assessment, recommendations };
+            }
+
+            // Helper functions
+            function generateRandomLetters(length) {
+                const letters = 'ABCDEFGHJKLMNOPQRSTUVWXYZ';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += letters.charAt(Math.floor(Math.random() * letters.length));
+                }
+                return result;
+            }
+
+            function getGrayHex(contrast) {
+                const value = Math.floor(255 * (100 - contrast) / 100);
+                const hex = value.toString(16).padStart(2, '0');
+                return hex + hex + hex;
+            }
+
+            function updateProgressBar() {
+                const totalTests = testState.tests.length;
+                const totalQuestions = testState.tests.reduce((sum, test) => sum + test.questions.length, 0);
+                const completedTests = testState.currentTest;
+                const completedQuestions = testState.currentQuestion;
+                
+                const testProgress = completedTests / totalTests;
+                const questionProgress = completedQuestions / testState.tests[testState.currentTest].questions.length;
+                const overallProgress = (testProgress + questionProgress / totalTests) * 100;
+                
+                progressBar.style.width = `${overallProgress}%`;
+                progressBar.setAttribute('aria-valuenow', overallProgress);
+                progressBar.textContent = `${Math.round(overallProgress)}%`;
+            }
+
+            function getAcuityRating(score) {
+                if (score >= 7) return 'Excellent';
+                if (score >= 5) return 'Good';
+                if (score >= 3) return 'Fair';
+                return 'Poor';
+            }
+
+            function getColorRating(score) {
+                if (score >= 5) return 'Excellent';
+                if (score >= 4) return 'Good';
+                if (score >= 3) return 'Fair';
+                return 'Poor';
+            }
+
+            function getContrastRating(score) {
+                if (score >= 8) return 'Excellent';
+                if (score >= 6) return 'Good';
+                if (score >= 4) return 'Fair';
+                return 'Poor';
+            }
+
+            function restartTest() {
+                testState.currentTest = 0;
+                testState.currentQuestion = 0;
+                testState.answers = [];
+                
+                resultsContainer.classList.add('d-none');
+                testProgressContainer.classList.remove('d-none');
+                
+                loadTest();
+            }
+        });
+    </script>
+</body>
+</html>
