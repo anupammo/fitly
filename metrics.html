@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Metrics Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #0061a8;
+            --secondary: #6c757d;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #f0f8ff;
+        }
+        
+        body {
+            background-color: var(--background);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        
+        .health-card {
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            transition: transform 0.3s;
+            border: none;
+        }
+        
+        .health-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #003f6d 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            height: 100%;
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .metric-range {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-normal {
+            background-color: var(--success);
+        }
+        
+        .status-warning {
+            background-color: var(--warning);
+        }
+        
+        .status-danger {
+            background-color: var(--danger);
+        }
+        
+        .bmi-calculator {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .progress-bar-normal {
+            background-color: var(--success);
+        }
+        
+        .progress-bar-warning {
+            background-color: var(--warning);
+        }
+        
+        .progress-bar-danger {
+            background-color: var(--danger);
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+        }
+        
+        .nav-pills .nav-link {
+            color: var(--dark);
+        }
+        
+        .info-icon {
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .tooltip-inner {
+            background-color: var(--primary);
+            border-radius: 8px;
+        }
+        
+        .tooltip.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .metric-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="header-section text-center">
+            <h1 class="display-4 fw-bold"><i class="bi bi-heart-pulse me-2"></i>Health Metrics Dashboard</h1>
+            <p class="lead">Understand standard health metrics and how they relate to your wellbeing</p>
+        </div>
+
+        <!-- BMI Calculator Section -->
+        <div class="health-card card mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="card-title">Don't Know Your BMI?</h3>
+                        <p class="card-text">Calculate your Body Mass Index to understand how it relates to other health metrics.</p>
+                        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#bmiCalculator">
+                            Calculate BMI Now
+                        </button>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <i class="bi bi-speedometer2 display-4 text-primary"></i>
+                    </div>
+                </div>
+                
+                <div class="collapse mt-4" id="bmiCalculator">
+                    <div class="bmi-calculator">
+                        <h4 class="mb-4">BMI Calculator</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Height (cm)</label>
+                                    <input type="number" class="form-control" id="height-input" placeholder="Enter your height">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Weight (kg)</label>
+                                    <input type="number" class="form-control" id="weight-input" placeholder="Enter your weight">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age-input" placeholder="Enter your age">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" id="gender-input">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100" onclick="calculateBMI()">
+                            Calculate BMI
+                        </button>
+                        <div class="mt-3" id="bmi-result">
+                            <!-- BMI result will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Metrics Navigation -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="healthMetricsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="blood-tab" data-bs-toggle="pill" data-bs-target="#blood" type="button" role="tab">Blood Metrics</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="vitals-tab" data-bs-toggle="pill" data-bs-target="#vitals" type="button" role="tab">Vital Signs</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="nutrition-tab" data-bs-toggle="pill" data-bs-target="#nutrition" type="button" role="tab">Nutrition</button>
+            </li>
+        </ul>
+
+        <!-- Health Metrics Content -->
+        <div class="tab-content" id="healthMetricsTabsContent">
+            <!-- Blood Metrics Tab -->
+            <div class="tab-pane fade show active" id="blood" role="tabpanel">
+                <div class="row">
+                    <!-- Blood Pressure -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Blood Pressure
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Force of blood against artery walls. Measured as systolic/diastolic (e.g., 120/80 mmHg)"></i>
+                            </h4>
+                            <div class="metric-value text-primary">120/80 mmHg</div>
+                            <div class="metric-range">Normal range: < 120/80 mmHg</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 70%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 20%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: < 120/80 mmHg</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Elevated: 120-129/<80 mmHg</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> High: ≥130/80 mmHg</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Blood Sugar -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Blood Sugar (Glucose)
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Amount of glucose in your blood. Fasting blood sugar is measured after not eating for 8 hours"></i>
+                            </h4>
+                            <div class="metric-value text-primary">100 mg/dL</div>
+                            <div class="metric-range">Normal fasting: 70-100 mg/dL</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 75%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 15%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: 70-100 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Prediabetes: 100-125 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> Diabetes: ≥126 mg/dL</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cholesterol -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Cholesterol
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Total cholesterol includes LDL (bad), HDL (good), and triglycerides"></i>
+                            </h4>
+                            <div class="metric-value text-primary">180 mg/dL</div>
+                            <div class="metric-range">Desirable: < 200 mg/dL</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 65%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 25%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Desirable: < 200 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Borderline: 200-239 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> High: ≥240 mg/dL</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- HDL Cholesterol -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                HDL (Good Cholesterol)
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Helps remove LDL cholesterol from arteries. Higher levels are better"></i>
+                            </h4>
+                            <div class="metric-value text-primary">55 mg/dL</div>
+                            <div class="metric-range">Optimal: ≥60 mg/dL</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 60%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 30%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Optimal: ≥60 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Borderline: 40-59 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> Risk: < 40 mg/dL</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- LDL Cholesterol -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                LDL (Bad Cholesterol)
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Contributes to plaque buildup in arteries. Lower levels are better"></i>
+                            </h4>
+                            <div class="metric-value text-primary">100 mg/dL</div>
+                            <div class="metric-range">Optimal: < 100 mg/dL</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 60%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 25%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 15%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Optimal: < 100 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Near Optimal: 100-129 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> High: ≥130 mg/dL</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Triglycerides -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Triglycerides
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Type of fat in blood. High levels increase heart disease risk"></i>
+                            </h4>
+                            <div class="metric-value text-primary">120 mg/dL</div>
+                            <div class="metric-range">Normal: < 150 mg/dL</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 70%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 20%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: < 150 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Borderline: 150-199 mg/dL</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> High: ≥200 mg/dL</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vital Signs Tab -->
+            <div class="tab-pane fade" id="vitals" role="tabpanel">
+                <div class="row">
+                    <!-- Heart Rate -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Heart Rate
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Number of heartbeats per minute. Normal varies by age and activity level"></i>
+                            </h4>
+                            <div class="metric-value text-primary">72 bpm</div>
+                            <div class="metric-range">Normal adult: 60-100 bpm</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 70%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 20%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: 60-100 bpm</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Tachycardia: >100 bpm</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> Bradycardia: < 60 bpm</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Respiratory Rate -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Respiratory Rate
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Number of breaths per minute. Measured at rest"></i>
+                            </h4>
+                            <div class="metric-value text-primary">16 breaths/min</div>
+                            <div class="metric-range">Normal adult: 12-20 breaths/min</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 75%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 15%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: 12-20 breaths/min</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Abnormal: <12 or >20 breaths/min</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Body Temperature -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Body Temperature
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Normal body temperature varies by measurement location"></i>
+                            </h4>
+                            <div class="metric-value text-primary">98.6°F (37°C)</div>
+                            <div class="metric-range">Normal: 97.8-99.1°F (36.5-37.3°C)</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 80%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 15%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 5%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: 97.8-99.1°F</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Fever: >100.4°F (>38°C)</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> Hypothermia: <95°F (<35°C)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nutrition Tab -->
+            <div class="tab-pane fade" id="nutrition" role="tabpanel">
+                <div class="row">
+                    <!-- BMI -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Body Mass Index (BMI)
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Measure of body fat based on height and weight"></i>
+                            </h4>
+                            <div class="metric-value text-primary">22.5</div>
+                            <div class="metric-range">Normal: 18.5-24.9</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 60%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 20%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 20%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Normal: 18.5-24.9</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Overweight: 25-29.9</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> Obese: ≥30</p>
+                                <p class="mb-0"><span class="status-indicator" style="background-color: #4fa9eb"></span> Underweight: <18.5</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Waist-to-Hip Ratio -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="metric-card">
+                            <h4 class="d-flex justify-content-between align-items-center">
+                                Waist-to-Hip Ratio
+                                <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Measure of fat distribution. Higher ratios indicate more abdominal fat"></i>
+                            </h4>
+                            <div class="metric-value text-primary">0.85</div>
+                            <div class="metric-range">Healthy: < 0.85 (Women), < 0.90 (Men)</div>
+                            
+                            <div class="progress mt-3">
+                                <div class="progress-bar progress-bar-normal" role="progressbar" style="width: 70%"></div>
+                                <div class="progress-bar progress-bar-warning" role="progressbar" style="width: 20%"></div>
+                                <div class="progress-bar progress-bar-danger" role="progressbar" style="width: 10%"></div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <p class="mb-1"><span class="status-indicator status-normal"></span> Low Risk: < 0.85 (W), < 0.90 (M)</p>
+                                <p class="mb-1"><span class="status-indicator status-warning"></span> Moderate Risk: 0.85-0.89 (W), 0.90-0.99 (M)</p>
+                                <p class="mb-1"><span class="status-indicator status-danger"></span> High Risk: ≥0.90 (W), ≥1.0 (M)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-5 py-4 text-muted">
+            <p>This information is for educational purposes only. Always consult with a healthcare professional for medical advice.</p>
+            <p class="mb-0">© 2023 Health Metrics Dashboard. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+
+        // BMI Calculator Function
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height-input').value);
+            const weight = parseFloat(document.getElementById('weight-input').value);
+            const age = parseInt(document.getElementById('age-input').value);
+            const gender = document.getElementById('gender-input').value;
+            
+            if (isNaN(height) || isNaN(weight) || isNaN(age) || height <= 0 || weight <= 0 || age <= 0) {
+                alert('Please enter valid values for height, weight, and age.');
+                return;
+            }
+            
+            // Calculate BMI: weight (kg) / (height (m))^2
+            const heightInMeters = height / 100;
+            const bmi = weight / (heightInMeters * heightInMeters);
+            const roundedBMI = bmi.toFixed(1);
+            
+            // Determine BMI category
+            let category, categoryClass;
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                categoryClass = 'text-info';
+            } else if (bmi < 25) {
+                category = 'Normal weight';
+                categoryClass = 'text-success';
+            } else if (bmi < 30) {
+                category = 'Overweight';
+                categoryClass = 'text-warning';
+            } else {
+                category = 'Obesity';
+                categoryClass = 'text-danger';
+            }
+            
+            // Display result
+            const resultDiv = document.getElementById('bmi-result');
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <h5>Your BMI Result</h5>
+                    <p class="display-6 ${categoryClass}">${roundedBMI}</p>
+                    <p class="fw-bold ${categoryClass}">${category}</p>
+                    <p class="mb-0">Based on your height: ${height}cm, weight: ${weight}kg, age: ${age}, and gender: ${gender}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
