@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FitlY - Stay Fit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #00FF94;
+            --secondary-color: #03002C;
+            --accent-color: #00647A;
+        }
+        
+        header {
+            background: linear-gradient(121.28deg, var(--secondary-color) 0%, var(--primary-color) 100%), 
+                        linear-gradient(180deg, var(--accent-color) 0%, #FFFFFF 100%);
+            background-blend-mode: overlay, difference;
+        }
+
+        .progress-container {
+            position: relative;
+            margin: 40px auto;
+            max-width: 800px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -16px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #6c757d;
+            z-index: 2;
+        }
+
+        .progress-step.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .progress-step.completed {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        #show-age,
+        #show-sex, 
+        #show-weight,
+        #show-height-value {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .form-range::-webkit-slider-thumb {
+            background: var(--primary-color);
+        }
+
+        .form-range::-moz-range-thumb {
+            background: var(--primary-color);
+        }
+
+        .bmi-result-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .bmi-value {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .bmi-category {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .bmi-progress {
+            height: 20px;
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: #00e085;
+            border-color: #00e085;
+            color: var(--secondary-color);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .nav-step {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: none;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .gender-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gender-card.selected {
+            border: 2px solid var(--primary-color);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="text-center fw-bolder display-1 mt-5 pt-5">FiTly</h1>
+                    <p class="text-center lead mb-5 pb-5">Stay Fit - BMI Calculator</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-5">
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 0%" id="progress-bar"></div>
+            </div>
+            <div class="progress-step completed" id="step1-indicator" style="left: 0%;">1</div>
+            <div class="progress-step" id="step2-indicator" style="left: 33.33%;">2</div>
+            <div class="progress-step" id="step3-indicator" style="left: 66.66%;">3</div>
+            <div class="progress-step" id="step4-indicator" style="left: 100%;">4</div>
+        </div>
+
+        <div class="container">
+            <!-- Step 1: Gender Selection -->
+            <div class="step active" id="step1">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 text-center">
+                        <h2 class="mb-4">Select Your Gender</h2>
+                        <p class="lead mb-5">This helps us personalize your experience</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-5 col-10 mb-4">
+                        <div class="card gender-card" id="male-card">
+                            <div class="card-body text-center p-5">
+                                <img class="img-fluid mb-4" src="res/img/man_simple.webp" alt="Male" style="max-height: 200px;">
+                                <h3>Male</h3>
+                                <div class="form-check justify-content-center d-flex mt-3">
+                                    <input class="form-check-input me-2" type="radio" id="male" value="male" name="gender">
+                                    <label class="form-check-label h5" for="male">Select</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-10">
+                        <div class="card gender-card selected" id="female-card">
+                            <div class="card-body text-center p-5">
+                                <img class="img-fluid mb-4" src="res/img/woman.webp" alt="Female" style="max-height: 200px;">
+                                <h3>Female</h3>
+                                <div class="form-check justify-content-center d-flex mt-3">
+                                    <input class="form-check-input me-2" type="radio" id="female" value="female" name="gender" checked>
+                                    <label class="form-check-label h5" for="female">Select</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-primary btn-lg px-5" onclick="nextStep(2)">Continue <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Date of Birth -->
+            <div class="step" id="step2">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 text-center">
+                        <h2 class="mb-4">When Were You Born?</h2>
+                        <p class="lead mb-5">We use this to calculate your age</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body p-5 text-center">
+                                <div class="mb-5">
+                                    <label class="form-label h4 mb-4">Select Your Date of Birth</label>
+                                    <input type="date" class="form-control form-control-lg shadow-none my-4 text-center" id="bdate" onchange="getDob()">
+                                    <div class="mt-4">
+                                        <div class="display-6" id="show-age">?</div>
+                                        <div class="text-muted">Years Old</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-step">
+                    <button type="button" class="btn btn-outline-primary" onclick="prevStep(1)"><i class="bi bi-arrow-left"></i> Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">Continue <i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Step 3: Height and Weight -->
+            <div class="step" id="step3">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 text-center">
+                        <h2 class="mb-4">Your Body Measurements</h2>
+                        <p class="lead mb-5">Enter your height and weight</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body p-5">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <h4 class="mb-4">Height</h4>
+                                        <input type="range" class="form-range mb-4" id="body-height" value="165" min="100" max="220" oninput="getHeight()">
+                                        <div class="h3" id="show-height">5'5" (165 cm)</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4 class="mb-4">Weight</h4>
+                                        <input type="range" class="form-range mb-4" id="body-weight" value="65" min="30" max="150" oninput="getWeight()">
+                                        <div class="h3" id="show-weight">65 Kg</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-step">
+                    <button type="button" class="btn btn-outline-primary" onclick="prevStep(2)"><i class="bi bi-arrow-left"></i> Back</button>
+                    <button type="button" class="btn btn-primary" onclick="calculateBMI()">Calculate BMI <i class="bi bi-calculator"></i></button>
+                </div>
+            </div>
+
+            <!-- Step 4: Results -->
+            <div class="step" id="step4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 text-center">
+                        <h2 class="mb-4">Your BMI Results</h2>
+                        <p class="lead mb-5">Here's your body mass index analysis</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card bmi-result-card">
+                            <div class="card-body p-5 text-center">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="bmi-value text-primary" id="bmi-value">22.5</div>
+                                        <div class="bmi-category text-success" id="bmi-category">Normal weight</div>
+                                        <div class="mt-4">
+                                            <p>Your BMI suggests you're at a <span id="bmi-status">healthy weight</span> for your height.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Underweight</span>
+                                                <span>Normal</span>
+                                                <span>Overweight</span>
+                                                <span>Obesity</span>
+                                            </div>
+                                            <div class="progress bmi-progress">
+                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 18.5%"></div>
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 24.5%"></div>
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 30%"></div>
+                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 27%"></div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <small class="text-muted">BMI Scale: &lt;18.5 | 18.5-24.9 | 25-29.9 | 30+</small>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4" id="bmi-indicator">
+                                            <i class="bi bi-caret-down-fill text-success" style="font-size: 2rem;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-outline-primary me-3" onclick="prevStep(3)"><i class="bi bi-arrow-left"></i> Back to Measurements</button>
+                        <button type="button" class="btn btn-primary" onclick="resetCalculator()"><i class="bi bi-arrow-repeat"></i> Calculate Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">© 2025 FitlY - Stay Fit. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+        crossorigin="anonymous"></script>
+    <script>
+        // Global user data object
+        const userData = {
+            gender: 'female',
+            dob: null,
+            age: null,
+            height: 165, // in cm
+            weight: 65,  // in kg
+            bmi: null
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up gender card selection
+            document.getElementById('male-card').addEventListener('click', function() {
+                selectGender('male');
+            });
+            
+            document.getElementById('female-card').addEventListener('click', function() {
+                selectGender('female');
+            });
+            
+            // Set max date for datepicker to today
+            const today = new Date();
+            const maxDate = new Date(today.getFullYear() - 5, today.getMonth(), today.getDate());
+            document.getElementById('bdate').max = maxDate.toISOString().split('T')[0];
+            
+            // Initialize height and weight displays
+            getHeight();
+            getWeight();
+        });
+
+        // Gender selection function
+        function selectGender(gender) {
+            userData.gender = gender;
+            
+            if (gender === 'male') {
+                document.getElementById('male-card').classList.add('selected');
+                document.getElementById('female-card').classList.remove('selected');
+                document.getElementById('male').checked = true;
+            } else {
+                document.getElementById('female-card').classList.add('selected');
+                document.getElementById('male-card').classList.remove('selected');
+                document.getElementById('female').checked = true;
+            }
+        }
+
+        // Calculate age from date of birth
+        function getDob() {
+            const dob = new Date(document.getElementById('bdate').value);
+            if (isNaN(dob.getTime())) return;
+            
+            userData.dob = dob;
+            
+            // Calculate age
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            
+            userData.age = age;
+            document.getElementById('show-age').textContent = age;
+        }
+
+        // Update height display
+        function getHeight() {
+            const height = parseInt(document.getElementById('body-height').value);
+            userData.height = height;
+            
+            // Convert cm to feet and inches
+            const inches = height / 2.54;
+            const feet = Math.floor(inches / 12);
+            const remainingInches = Math.round(inches % 12);
+            
+            document.getElementById('show-height').textContent = `${feet}'${remainingInches}" (${height} cm)`;
+        }
+
+        // Update weight display
+        function getWeight() {
+            const weight = parseInt(document.getElementById('body-weight').value);
+            userData.weight = weight;
+            document.getElementById('show-weight').textContent = `${weight} Kg`;
+        }
+
+        // Navigation functions
+        function nextStep(step) {
+            // Validate current step before proceeding
+            if (step === 2 && !userData.gender) {
+                alert('Please select your gender');
+                return;
+            }
+            
+            if (step === 3 && !userData.dob) {
+                alert('Please select your date of birth');
+                return;
+            }
+            
+            if (step === 4) {
+                calculateBMI();
+            }
+            
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show the target step
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            // Update progress indicator
+            updateProgress(step);
+        }
+
+        function prevStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show the target step
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            // Update progress indicator
+            updateProgress(step);
+        }
+
+        function updateProgress(step) {
+            // Reset all indicators
+            document.querySelectorAll('.progress-step').forEach(el => {
+                el.classList.remove('completed', 'active');
+            });
+            
+            // Update progress bar
+            const progressPercentage = (step - 1) * 33.33;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            
+            // Mark previous steps as completed
+            for (let i = 1; i < step; i++) {
+                document.getElementById(`step${i}-indicator`).classList.add('completed');
+            }
+            
+            // Mark current step as active
+            if (step < 4) {
+                document.getElementById(`step${step}-indicator`).classList.add('active');
+            }
+        }
+
+        // Calculate BMI
+        function calculateBMI() {
+            // BMI formula: weight (kg) / (height (m))^2
+            const heightInMeters = userData.height / 100;
+            userData.bmi = (userData.weight / (heightInMeters * heightInMeters)).toFixed(1);
+            
+            // Display BMI value
+            document.getElementById('bmi-value').textContent = userData.bmi;
+            
+            // Determine BMI category
+            let category, status, textClass;
+            
+            if (userData.bmi < 18.5) {
+                category = 'Underweight';
+                status = 'underweight';
+                textClass = 'text-info';
+            } else if (userData.bmi < 25) {
+                category = 'Normal weight';
+                status = 'a healthy weight';
+                textClass = 'text-success';
+            } else if (userData.bmi < 30) {
+                category = 'Overweight';
+                status = 'overweight';
+                textClass = 'text-warning';
+            } else {
+                category = 'Obesity';
+                status = 'obese';
+                textClass = 'text-danger';
+            }
+            
+            // Update category and status
+            document.getElementById('bmi-category').textContent = category;
+            document.getElementById('bmi-category').className = `bmi-category ${textClass}`;
+            document.getElementById('bmi-status').textContent = status;
+            
+            // Position BMI indicator on the scale
+            positionBMIIndicator();
+            
+            // Show results step
+            nextStep(4);
+        }
+
+        function positionBMIIndicator() {
+            const indicator = document.getElementById('bmi-indicator');
+            let position;
+            
+            if (userData.bmi < 18.5) {
+                position = (userData.bmi / 18.5) * 18.5;
+            } else if (userData.bmi < 25) {
+                position = 18.5 + ((userData.bmi - 18.5) / 6.5) * 24.5;
+            } else if (userData.bmi < 30) {
+                position = 43 + ((userData.bmi - 25) / 5) * 30;
+            } else {
+                position = 73 + (Math.min(userData.bmi - 30, 20) / 20) * 27;
+            }
+            
+            indicator.style.marginLeft = `calc(${position}% - 1rem)`;
+        }
+
+        // Reset calculator
+        function resetCalculator() {
+            // Reset user data
+            userData.gender = 'female';
+            userData.dob = null;
+            userData.age = null;
+            userData.height = 165;
+            userData.weight = 65;
+            userData.bmi = null;
+            
+            // Reset UI
+            selectGender('female');
+            document.getElementById('bdate').value = '';
+            document.getElementById('show-age').textContent = '?';
+            document.getElementById('body-height').value = '165';
+            document.getElementById('body-weight').value = '65';
+            getHeight();
+            getWeight();
+            
+            // Go back to first step
+            prevStep(1);
+        }
+    </script>
+</body>
+
+</html>
