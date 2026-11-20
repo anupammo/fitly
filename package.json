@@ -1,0 +1,36 @@
+{
+  "name": "fitly",
+  "version": "0.1.0",
+  "description": "Fitly: health and fitness tools, Indian food calories, blog and daily tracker",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anupammo/fitly.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anupammo/fitly/issues"
+  },
+  "homepage": "https://github.com/anupammo/fitly#readme",
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^18.2.1",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  },
+  "private": true
+}
