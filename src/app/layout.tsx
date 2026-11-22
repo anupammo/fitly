@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 import PwaManager from "@/components/PwaManager";
+import HeaderInstall from "@/components/HeaderInstall";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -44,10 +45,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <nav className="nav" aria-label="Main">
               <Link href="/tools">Tools</Link>
-              <Link href="/calories">Food calories</Link>
+              <Link href="/calories">
+                <span className="hide-sm">Food calories</span>
+                <span className="show-sm">Calories</span>
+              </Link>
               <Link href="/blog">Blog</Link>
               <Link href="/tracker">Tracker</Link>
             </nav>
+            <HeaderInstall />
           </div>
         </header>
         <main>

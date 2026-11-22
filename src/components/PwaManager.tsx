@@ -15,7 +15,9 @@ import {
 } from "@/lib/pwaInstall";
 
 const DISMISS_KEY = "fitly:install-dismissed-at";
-const DISMISS_DAYS = 14;
+const DISMISS_DAYS = 3;
+// How long to wait for the browser to offer installation before showing manual steps instead.
+const FALLBACK_DELAY_MS = 4000;
 
 const safeGet = (k: string) => {
   try {
@@ -49,12 +51,15 @@ export default function PwaManager() {
   const [standalone, setStandalone] = useState(true);
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
   const [offline, setOffline] = useState(false);
+  const [fallbackReady, setFallbackReady] = useState(false);
 
   useEffect(() => {
     startInstallListener();
     setPlatform(detectPlatform());
     setDismissed(recentlyDismissed());
     setStandalone(isStandalone());
+    const t = window.setTimeout(() => setFallbackReady(true), FALLBACK_DELAY_MS);
+    return () => window.clearTimeout(t);
   }, []);
 
   // Service worker registration and update detection.
@@ -101,10 +106,8 @@ export default function PwaManager() {
     setDismissed(true);
   };
 
-  const onInstall = async () => {
-    const result = await promptInstall();
-    if (result === "dismissed") dismiss();
-  };
+  // Cancelling the browser's own dialog doesn't hide the banner; only the × does.
+  const onInstall = () => promptInstall();
 
   // The /install page has its own full UI; don't stack the banner on top of it.
   const onInstallPage = pathname === "/install";
@@ -197,6 +200,32 @@ export default function PwaManager() {
               Open
             </a>
           )}
+          <button className="pwa-close" onClick={dismiss} aria-label="Close">
+            ×
+          </button>
+        </div>
+      );
+    } else if (
+      fallbackReady &&
+      s === "idle" &&
+      (platform === "android-chrome" || platform === "android-samsung" || platform === "desktop")
+    ) {
+      // The browser didn't offer installation (e.g. it's holding back after a cancelled prompt),
+      // so point to its own menu instead.
+      banner = (
+        <div className="pwa-banner">
+          <Icon />
+          <span className="small">
+            <b>Install Fitly:</b>{" "}
+            {platform === "android-samsung" ? (
+              <>tap ≡ then <b>Add page to → Home screen</b>.</>
+            ) : platform === "desktop" ? (
+              <>click the install icon in the address bar.</>
+            ) : (
+              <>tap <b>⋮</b> at the top right, then <b>Install app</b>.</>
+            )}{" "}
+            <Link href="/install">Show me how</Link>
+          </span>
           <button className="pwa-close" onClick={dismiss} aria-label="Close">
             ×
           </button>

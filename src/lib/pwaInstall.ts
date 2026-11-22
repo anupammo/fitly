@@ -30,6 +30,15 @@ export function startInstallListener() {
     set({ status: "available", event: e as BeforeInstallPromptEvent });
   });
   window.addEventListener("appinstalled", () => set({ status: "installed", event: null }));
+  // Chrome on Android can tell a page that its own PWA is already installed
+  // (needs the "webapp" entry in the manifest's related_applications).
+  const nav = navigator as Navigator & { getInstalledRelatedApps?: () => Promise<{ platform: string }[]> };
+  nav
+    .getInstalledRelatedApps?.()
+    .then((apps) => {
+      if (apps.some((a) => a.platform === "webapp") && state.status !== "available") set({ status: "installed" });
+    })
+    .catch(() => {});
 }
 
 /** Opens the browser's install dialog. Must be called from a tap/click. */

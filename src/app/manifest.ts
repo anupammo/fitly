@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITE } from "@/lib/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -16,6 +17,9 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "en-IN",
     dir: "ltr",
     categories: ["health", "fitness", "lifestyle", "food"],
+    // Lets the site detect that its own app is already installed (Chrome on Android).
+    related_applications: [{ platform: "webapp", url: `${SITE.url}/manifest.webmanifest` }],
+    prefer_related_applications: false,
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
