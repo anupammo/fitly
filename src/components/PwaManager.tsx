@@ -14,28 +14,27 @@ import {
   type Platform,
 } from "@/lib/pwaInstall";
 
-const DISMISS_KEY = "fitly:install-dismissed-at";
-const DISMISS_DAYS = 3;
+// While the app isn't installed, the install banner shows on every visit. Closing it (×) hides it
+// only for the current tab session, so it's back the next time Fitly is opened.
+const DISMISS_KEY = "fitly:install-dismissed";
+const LEGACY_DISMISS_KEY = "fitly:install-dismissed-at"; // older versions hid the banner for days
 // How long to wait for the browser to offer installation before showing manual steps instead.
-const FALLBACK_DELAY_MS = 4000;
+const FALLBACK_DELAY_MS = 2500;
 
-const safeGet = (k: string) => {
+const recentlyDismissed = () => {
   try {
-    return localStorage.getItem(k);
+    localStorage.removeItem(LEGACY_DISMISS_KEY);
+    return sessionStorage.getItem(DISMISS_KEY) === "1";
   } catch {
-    return null;
+    return false;
   }
 };
-const safeSet = (k: string, v: string) => {
+const rememberDismissed = () => {
   try {
-    localStorage.setItem(k, v);
+    sessionStorage.setItem(DISMISS_KEY, "1");
   } catch {
     /* storage blocked */
   }
-};
-const recentlyDismissed = () => {
-  const at = Number(safeGet(DISMISS_KEY));
-  return at > 0 && Date.now() - at < DISMISS_DAYS * 86_400_000;
 };
 
 function Icon() {
@@ -102,7 +101,7 @@ export default function PwaManager() {
   }, []);
 
   const dismiss = () => {
-    safeSet(DISMISS_KEY, String(Date.now()));
+    rememberDismissed();
     setDismissed(true);
   };
 
