@@ -12,6 +12,7 @@ This is the Phase 0 web MVP from the strategy and roadmap.
 | Blog | `/blog`, `/blog/[slug]` | Markdown files in `content/blog`. Posts without `reviewedBy` show a notice, get `noindex` and stay out of the sitemap. |
 | Daily tracker | `/tracker` | Water, steps, food (from the database), sleep, weight, mood, streaks, goals from your profile. Stored in the browser only, with data download and delete. |
 | SEO | `/sitemap.xml`, `/robots.txt` | Every page is pre-rendered as static HTML. |
+| PWA | `/manifest.webmanifest`, `/sw.js`, `/offline` | Installable app with icons, shortcuts (including "Add a glass of water") and install-dialog screenshots. Works offline: the home page, tracker, all tools and the food list are saved on first visit; other pages are saved as they are opened. Install banner (iPhone gets Add to Home Screen steps), update banner on new deploys, offline indicator. |
 
 The original HTML prototypes are kept in `prototypes/`.
 
@@ -25,6 +26,13 @@ npm run build      # static production build
 ```
 
 Set `NEXT_PUBLIC_SITE_URL` (for example `https://fitly.in`) in production so canonical URLs and the sitemap use the real domain.
+
+## PWA notes
+
+- The service worker is generated at build time by `src/app/sw.js/route.ts`; its cache name changes with every deploy, and old caches are deleted when the new version takes over.
+- It only registers in production builds (`npm run build && npm start`), not in `npm run dev`.
+- Regenerate icons after editing `scripts/icon.svg`: `node scripts/make-icons.js`.
+- Regenerate install screenshots against a running build: `node scripts/make-screenshots.js`.
 
 ## Code map
 
@@ -41,4 +49,5 @@ Set `NEXT_PUBLIC_SITE_URL` (for example `https://fitly.in`) in production so can
 - [ ] Medical reviewer signs off the three starter articles (`reviewedBy` in front matter)
 - [ ] Hindi versions of tool and food pages
 - [ ] Accounts and cloud sync for the tracker (needs DPDP consent flow)
-- [ ] Android app (React Native) reusing `src/lib`
+- [ ] Push notification reminders (water, sleep) — needs a small backend for Web Push
+- [ ] Publish the PWA to Google Play as a Trusted Web Activity (Bubblewrap), then decide whether a native app is still needed

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FOODS } from "@/data/foods";
 import { ACTIVITY_LEVELS, addDays, type ActivityLevel, type Sex, type WeightGoal } from "@/lib/calculators";
 import {
@@ -45,6 +45,8 @@ export default function Tracker() {
   const [today, setToday] = useState("");
   const [date, setDate] = useState("");
   const [query, setQuery] = useState("");
+  const [toast, setToast] = useState("");
+  const shortcutHandled = useRef(false);
 
   useEffect(() => {
     let raw: string | null = null;
@@ -54,7 +56,17 @@ export default function Tracker() {
       /* storage blocked (private mode): run in memory */
     }
     const t = localToday();
-    setState(parseState(raw));
+    let loaded = parseState(raw);
+    // Home-screen shortcut "Add a glass of water" opens /tracker?add=water.
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("add") === "water" && !shortcutHandled.current) {
+      shortcutHandled.current = true;
+      const d = loaded.days[t] ?? emptyDay();
+      loaded = { ...loaded, days: { ...loaded.days, [t]: { ...d, water: d.water + 1 } } };
+      setToast(`Added a glass of water. ${d.water + 1} today.`);
+      window.history.replaceState(null, "", "/tracker");
+    }
+    setState(loaded);
     setToday(t);
     setDate(t);
   }, []);
@@ -109,6 +121,14 @@ export default function Tracker() {
 
   return (
     <>
+      {toast && (
+        <p className="notice" style={{ borderColor: "var(--brand)" }} role="status">
+          {toast}{" "}
+          <button className="link-button" onClick={() => setToast("")}>
+            OK
+          </button>
+        </p>
+      )}
       <div className="date-nav">
         <button className="btn secondary" onClick={() => setDate(addDays(date, -1))} aria-label="Previous day">
           ←

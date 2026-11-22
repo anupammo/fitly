@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
+import PwaManager from "@/components/PwaManager";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,10 +11,24 @@ export const metadata: Metadata = {
     "Free BMI, calorie, protein and pregnancy calculators, calories in 75+ Indian foods, expert health articles and a daily water, steps and food tracker.",
   openGraph: { siteName: SITE.name, type: "website", locale: "en_IN" },
   alternates: { canonical: "/" },
+  applicationName: SITE.name,
+  appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "default" },
+  formatDetection: { telephone: false },
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f9d6b",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0f9d6b" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1513" },
+  ],
+  viewportFit: "cover",
   width: "device-width",
   initialScale: 1,
 };
@@ -53,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p>© {new Date().getFullYear()} Fitly</p>
           </div>
         </footer>
+        <PwaManager />
       </body>
     </html>
   );
