@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: u("/calories"), changeFrequency: "weekly", priority: 0.9 },
     { url: u("/blog"), changeFrequency: "daily", priority: 0.8 },
     { url: u("/tracker"), changeFrequency: "monthly", priority: 0.7 },
+    { url: u("/install"), changeFrequency: "monthly", priority: 0.5 },
     { url: u("/about"), changeFrequency: "yearly", priority: 0.3 },
     ...TOOLS.map((t) => ({ url: u(`/tools/${t.slug}`), changeFrequency: "monthly" as const, priority: 0.8 })),
     ...FOODS.map((f) => ({ url: u(`/calories/${f.slug}`), changeFrequency: "monthly" as const, priority: 0.6 })),

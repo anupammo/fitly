@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 const VERSION = (process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now())).slice(0, 12);
 
 // Pages available offline from the first visit. Food and blog pages are cached as people open them.
-const PRECACHE_PAGES = ["/", "/offline", "/tracker", "/tools", "/calories", "/blog", "/about", ...TOOLS.map((t) => `/tools/${t.slug}`)];
+const PRECACHE_PAGES = ["/", "/offline", "/tracker", "/tools", "/calories", "/blog", "/about", "/install", ...TOOLS.map((t) => `/tools/${t.slug}`)];
 const PRECACHE_FILES = ["/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/favicon-32.png", "/icons/icon.svg"];
 
 function serviceWorker(version: string, pages: string[], files: string[]) {

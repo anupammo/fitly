@@ -1,11 +1,18 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-};
+import {
+  chromeIntentUrl,
+  detectPlatform,
+  isStandalone,
+  promptInstall,
+  resetInstallStatus,
+  startInstallListener,
+  useInstallState,
+  type Platform,
+} from "@/lib/pwaInstall";
 
 const DISMISS_KEY = "fitly:install-dismissed-at";
 const DISMISS_DAYS = 14;
@@ -24,31 +31,31 @@ const safeSet = (k: string, v: string) => {
     /* storage blocked */
   }
 };
-
-function isStandalone() {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true
-  );
-}
-
-function isIosSafari() {
-  const ua = navigator.userAgent;
-  const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  return ios && /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
-}
-
-function recentlyDismissed() {
+const recentlyDismissed = () => {
   const at = Number(safeGet(DISMISS_KEY));
   return at > 0 && Date.now() - at < DISMISS_DAYS * 86_400_000;
+};
+
+function Icon() {
+  return <img src="/icons/icon-192.png" alt="" width={36} height={36} />;
 }
 
-/** Registers the service worker and shows install, update and offline banners. */
+/** Registers the service worker and shows install, install-progress, update and offline banners. */
 export default function PwaManager() {
-  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showIosHint, setShowIosHint] = useState(false);
+  const install = useInstallState();
+  const pathname = usePathname();
+  const [platform, setPlatform] = useState<Platform | null>(null);
+  const [dismissed, setDismissed] = useState(true);
+  const [standalone, setStandalone] = useState(true);
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
   const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    startInstallListener();
+    setPlatform(detectPlatform());
+    setDismissed(recentlyDismissed());
+    setStandalone(isStandalone());
+  }, []);
 
   // Service worker registration and update detection.
   useEffect(() => {
@@ -59,11 +66,9 @@ export default function PwaManager() {
       reloading = true;
       window.location.reload();
     };
-
     navigator.serviceWorker
       .register("/sw.js", { scope: "/" })
       .then((reg) => {
-        // A new version is already waiting (e.g. downloaded on a previous visit).
         if (reg.waiting && navigator.serviceWorker.controller) setWaiting(reg.waiting);
         reg.addEventListener("updatefound", () => {
           const sw = reg.installing;
@@ -71,34 +76,15 @@ export default function PwaManager() {
             if (sw.state === "installed" && navigator.serviceWorker.controller) setWaiting(sw);
           });
         });
-        // Check for a new deploy when the app comes back to the foreground.
-        const onVisible = () => document.visibilityState === "visible" && reg.update().catch(() => {});
-        document.addEventListener("visibilitychange", onVisible);
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") reg.update().catch(() => {});
+        });
       })
       .catch(() => {});
-
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
     return () => navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
   }, []);
 
-  // Install prompt (Chrome, Edge, Samsung Internet) and iOS Safari instructions.
-  useEffect(() => {
-    if (isStandalone()) return;
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      if (!recentlyDismissed()) setInstallEvent(e as BeforeInstallPromptEvent);
-    };
-    const onInstalled = () => setInstallEvent(null);
-    window.addEventListener("beforeinstallprompt", onPrompt);
-    window.addEventListener("appinstalled", onInstalled);
-    if (isIosSafari() && !recentlyDismissed()) setShowIosHint(true);
-    return () => {
-      window.removeEventListener("beforeinstallprompt", onPrompt);
-      window.removeEventListener("appinstalled", onInstalled);
-    };
-  }, []);
-
-  // Online/offline indicator.
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine);
     update();
@@ -110,19 +96,127 @@ export default function PwaManager() {
     };
   }, []);
 
-  const dismissInstall = () => {
+  const dismiss = () => {
     safeSet(DISMISS_KEY, String(Date.now()));
-    setInstallEvent(null);
-    setShowIosHint(false);
+    setDismissed(true);
   };
 
-  const install = async () => {
-    if (!installEvent) return;
-    await installEvent.prompt();
-    const { outcome } = await installEvent.userChoice;
-    if (outcome === "dismissed") safeSet(DISMISS_KEY, String(Date.now()));
-    setInstallEvent(null);
+  const onInstall = async () => {
+    const result = await promptInstall();
+    if (result === "dismissed") dismiss();
   };
+
+  // The /install page has its own full UI; don't stack the banner on top of it.
+  const onInstallPage = pathname === "/install";
+  const s = install.status;
+
+  let banner: React.ReactNode = null;
+  if (waiting) {
+    banner = (
+      <div className="pwa-banner" role="status">
+        <span>A new version of Fitly is ready.</span>
+        <button className="btn" onClick={() => waiting.postMessage({ type: "SKIP_WAITING" })}>
+          Update
+        </button>
+      </div>
+    );
+  } else if (s === "prompting" || s === "installing") {
+    banner = (
+      <div className="pwa-banner" role="status">
+        <Icon />
+        <span>
+          <b>Installing Fitly…</b>
+          <br />
+          <span className="small muted">This takes a few seconds. The icon appears in your app list, and on most phones on the home screen.</span>
+        </span>
+      </div>
+    );
+  } else if (s === "installed" && !standalone && !onInstallPage) {
+    banner = (
+      <div className="pwa-banner" role="status">
+        <Icon />
+        <span>
+          <b>Fitly is installed.</b>
+          <br />
+          <span className="small muted">Open it from your home screen or app list. Can&apos;t find it?</span>{" "}
+          <Link href="/install" className="small">
+            Get help
+          </Link>
+        </span>
+        <button className="pwa-close" onClick={() => setStandalone(true)} aria-label="Close">
+          ×
+        </button>
+      </div>
+    );
+  } else if (s === "failed" && !onInstallPage) {
+    banner = (
+      <div className="pwa-banner pwa-offline" role="alert">
+        <Icon />
+        <span>
+          <b>Fitly didn&apos;t finish installing.</b>
+          <br />
+          <span className="small muted">Your phone may be blocking home screen icons.</span>{" "}
+          <Link href="/install" className="small">
+            See how to fix it
+          </Link>
+        </span>
+        <button className="pwa-close" onClick={resetInstallStatus} aria-label="Close">
+          ×
+        </button>
+      </div>
+    );
+  } else if (!standalone && !dismissed && !onInstallPage) {
+    if (s === "available") {
+      banner = (
+        <div className="pwa-banner">
+          <Icon />
+          <span>
+            <b>Install Fitly</b>
+            <br />
+            <span className="small muted">Works offline, opens from your home screen.</span>
+          </span>
+          <button className="btn" onClick={onInstall}>
+            Install
+          </button>
+          <button className="pwa-close" onClick={dismiss} aria-label="Not now">
+            ×
+          </button>
+        </div>
+      );
+    } else if (platform === "in-app") {
+      const android = /Android/.test(navigator.userAgent);
+      banner = (
+        <div className="pwa-banner">
+          <Icon />
+          <span className="small">
+            <b>To install Fitly, open this page in {android ? "Chrome" : "Safari"}.</b>{" "}
+            {android ? "" : "Tap ⋯ and choose Open in Safari."}
+          </span>
+          {android && (
+            <a className="btn" href={chromeIntentUrl()}>
+              Open
+            </a>
+          )}
+          <button className="pwa-close" onClick={dismiss} aria-label="Close">
+            ×
+          </button>
+        </div>
+      );
+    } else if (platform === "ios-safari" || platform === "ios-other") {
+      banner = (
+        <div className="pwa-banner">
+          <Icon />
+          <span className="small">
+            <b>Install Fitly:</b> tap Share, then <b>Add to Home Screen</b>.{" "}
+            <Link href="/install">Show me how</Link>
+          </span>
+          <button className="pwa-close" onClick={dismiss} aria-label="Close">
+            ×
+          </button>
+        </div>
+      );
+    }
+  }
 
   return (
     <div className="pwa-stack" aria-live="polite">
@@ -131,45 +225,7 @@ export default function PwaManager() {
           <span>You&apos;re offline. Saved pages and your tracker still work.</span>
         </div>
       )}
-      {waiting && (
-        <div className="pwa-banner" role="status">
-          <span>A new version of Fitly is ready.</span>
-          <button className="btn" onClick={() => waiting.postMessage({ type: "SKIP_WAITING" })}>
-            Update
-          </button>
-        </div>
-      )}
-      {!waiting && installEvent && (
-        <div className="pwa-banner">
-          <img src="/icons/icon-192.png" alt="" width={36} height={36} />
-          <span>
-            <b>Install Fitly</b>
-            <br />
-            <span className="small muted">Works offline, opens from your home screen.</span>
-          </span>
-          <button className="btn" onClick={install}>
-            Install
-          </button>
-          <button className="pwa-close" onClick={dismissInstall} aria-label="Not now">
-            ×
-          </button>
-        </div>
-      )}
-      {!waiting && !installEvent && showIosHint && (
-        <div className="pwa-banner">
-          <img src="/icons/icon-192.png" alt="" width={36} height={36} />
-          <span className="small">
-            <b>Install Fitly:</b> tap the Share button{" "}
-            <svg aria-hidden width="14" height="16" viewBox="0 0 14 18" style={{ verticalAlign: "-2px" }}>
-              <path d="M7 1v11M3 5l4-4 4 4M2 8H1v9h12V8h-1" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>{" "}
-            then <b>Add to Home Screen</b>.
-          </span>
-          <button className="pwa-close" onClick={dismissInstall} aria-label="Close">
-            ×
-          </button>
-        </div>
-      )}
+      {banner}
     </div>
   );
 }

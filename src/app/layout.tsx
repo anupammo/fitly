@@ -59,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/tools">All tools</Link>
               <Link href="/calories">Indian food calories</Link>
               <Link href="/blog">Blog</Link>
+              <Link href="/install">Install the app</Link>
               <Link href="/about">About &amp; disclaimer</Link>
             </nav>
             <p>
